@@ -1,0 +1,8 @@
+node_modules/
+dist/
+BP/scripts/main.js
+BP/manifest.json
+RP/manifest.json
+*.mcaddon
+*.log
+.DS_Store

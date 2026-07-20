@@ -1,0 +1,18 @@
+{
+  "name": "minecraft-plus-plus",
+  "version": "0.3.3",
+  "private": true,
+  "description": "Minecraft++ — Bedrock addon combat overhaul (HP x5, Combat Core, Target HUD)",
+  "type": "module",
+  "scripts": {
+    "manifests": "node tools/generate-manifests.mjs",
+    "build": "npm run manifests && node build.mjs",
+    "package": "npm run build && node tools/package-addon.mjs",
+    "test": "node --test tests/"
+  },
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "esbuild": "^0.28.1",
+    "typescript": "^5.9.3"
+  }
+}
