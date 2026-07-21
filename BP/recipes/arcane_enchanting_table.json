@@ -1,0 +1,20 @@
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "mcpp:arcane_enchanting_table"
+    },
+    "tags": ["crafting_table"],
+    "unlock": {
+      "context": "AlwaysUnlocked"
+    },
+    "pattern": ["ABA", "CEC", "BBB"],
+    "key": {
+      "A": { "item": "minecraft:amethyst_shard" },
+      "B": { "item": "minecraft:obsidian" },
+      "C": { "item": "minecraft:crying_obsidian" },
+      "E": { "item": "minecraft:enchanting_table" }
+    },
+    "result": { "item": "mcpp:arcane_enchanting_table", "count": 1 }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "format_version": "1.20.30",
+  "minecraft:item": {
+    "description": {
+      "identifier": "mcpp:critical_book_5",
+      "menu_category": {
+        "category": "items",
+        "group": "itemGroup.name.enchantedBook"
+      }
+    },
+    "components": {
+      "minecraft:display_name": {
+        "value": "Sách Chí Mạng V"
+      },
+      "minecraft:icon": {
+        "texture": "mcpp_critical_book"
+      },
+      "minecraft:glint": true,
+      "minecraft:max_stack_size": 1
+    }
+  }
+}

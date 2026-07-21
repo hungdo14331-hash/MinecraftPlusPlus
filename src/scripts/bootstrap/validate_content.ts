@@ -1,4 +1,4 @@
-import { WeaponRegistry, AbilityRegistry, EnchantRegistry } from "../core/registry/registries";
+import { WeaponRegistry, AbilityRegistry, EnchantRegistry, MobRewardRegistry } from "../core/registry/registries";
 import { log } from "../core/utils/logger";
 
 export function validateContent(): boolean {
@@ -14,6 +14,12 @@ export function validateContent(): boolean {
   for (const w of WeaponRegistry.all()) {
     for (const a of w.abilities ?? []) {
       if (!AbilityRegistry.has(a)) errors.push(`weapon ${w.id} tham chieu ability khong ton tai: ${a}`);
+    }
+  }
+
+  for (const reward of MobRewardRegistry.all()) {
+    if (reward.minCoins < 0 || reward.maxCoins < reward.minCoins) {
+      errors.push(`mob reward ${reward.id} co khoang coin khong hop le`);
     }
   }
 

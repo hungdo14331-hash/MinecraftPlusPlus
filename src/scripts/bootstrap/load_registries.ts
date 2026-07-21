@@ -3,12 +3,14 @@ import { register as registerAbilities } from "../content/abilities/index";
 import { register as registerEnchants } from "../content/enchantments/index";
 import { register as registerCurrencies } from "../content/currencies/index";
 import { register as registerStructures } from "../content/structures/index";
+import { register as registerMobRewards } from "../content/mobs/rewards";
 import {
   WeaponRegistry,
   AbilityRegistry,
   EnchantRegistry,
   CurrencyRegistry,
   StructureRegistry,
+  MobRewardRegistry,
 } from "../core/registry/registries";
 import { log } from "../core/utils/logger";
 
@@ -18,12 +20,13 @@ export function loadRegistries(): void {
   registerEnchants();
   registerCurrencies();
   registerStructures();
+  registerMobRewards();
 
-  for (const r of [WeaponRegistry, AbilityRegistry, EnchantRegistry, CurrencyRegistry, StructureRegistry]) {
+  for (const r of [WeaponRegistry, AbilityRegistry, EnchantRegistry, CurrencyRegistry, StructureRegistry, MobRewardRegistry]) {
     r.freeze();
   }
 
   log.info(
-    `registries: weapons=${WeaponRegistry.size} abilities=${AbilityRegistry.size} enchants=${EnchantRegistry.size} currencies=${CurrencyRegistry.size} structures=${StructureRegistry.size}`
+    `registries: weapons=${WeaponRegistry.size} abilities=${AbilityRegistry.size} enchants=${EnchantRegistry.size} currencies=${CurrencyRegistry.size} structures=${StructureRegistry.size} mobRewards=${MobRewardRegistry.size}`
   );
 }

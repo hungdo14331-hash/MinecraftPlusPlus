@@ -21,32 +21,52 @@ export function register(): void {
   });
 
   // ============================================================
-  // Vu khi #2 (thu nghiem) — Iron Sword vanilla, override nhanh hon baseline.
+  // Vu khi #2 (thu nghiem) — Iron Sword vanilla, dung baseline nhu cac kiem khac.
   // Base: iron sword vanilla (khong tao item moi — khong can texture/RP rieng).
   //
-  // "Tang toc danh": KHONG doi toc vung kiem vat ly cua Bedrock (Bedrock von khong co
-  // co che attack cooldown nhu Java — click nhanh bao nhieu cung full damage neu KHONG
-  // dang ky trong WeaponRegistry). O day, iron sword duoc dat requiredTicks THAP HON
-  // BASELINE_ATTACK_SPEED_TICKS (8 < 13) — nghia la, SO VOI mot vu khi MC++ khac o muc
-  // baseline (vd diamond sword ben tren), iron sword duoc phep danh lien tuc voi nhip
-  // nhanh hon ma van giu 100% damage + van kich hoat trigger phu, trong khi diamond sword
-  // se bi phat (giam damage tuyen tinh, san 20%) neu danh nhanh hon 13 tick/don.
-  // Day la "nhanh hon" THEO NGHIA TUONG DOI giua cac vu khi MC++ — hay tu test bang cach
-  // dam ca 2 vu khi that nhanh lien tuc va so sanh damage hien tren HUD/log.
+  // Toc danh duoc dat tai baseline 13 tick. Custom enchant Sloth giam thoi gian cho
+  // theo he so +20% toc do moi cap cho moi loai kiem.
   //
-  // "Tang toc chay khi danh trung": moi don trung DU CHARGE (canTriggerOnHit=true) se tu
-  // cong Speed III (amplifier=2) trong 4 giay (80 tick) len chinh nguoi danh.
+  // Tang toc chay sau don danh da duoc chuyen sang custom enchant Momentum I-III.
   // ============================================================
   WeaponRegistry.register({
     id: "mcpp:iron_sword",
     itemTypeId: "minecraft:iron_sword",
     stats: {
       attackDamageMcpp: 6 * HEALTH_SCALE, // damage goc vanilla cua iron sword (6)
-      attackSpeed: 8, // tick — thap hon baseline (13) => "nhanh hon tuong doi"
+      attackSpeed: CombatConstants.BASELINE_ATTACK_SPEED_TICKS,
       armorPenetration: 0, // chua bat xuyen giap cho vu khi thu nghiem nay
       criticalChance: 0, // chua bat crit MC++ rieng — tranh chong lan voi bien do dang do
       knockback: 0,
     },
-    onHitEffects: [{ type: "self_speed", amplifier: 2, durationTicks: 80 }],
   });
+
+  WeaponRegistry.register({
+    id: "mcpp:conqueror_greatsword",
+    itemTypeId: "mcpp:conqueror_greatsword",
+    stats: {
+      attackDamageMcpp: 12 * HEALTH_SCALE,
+      attackSpeed: 22,
+      armorPenetration: 0.1,
+      criticalChance: 0,
+      knockback: 0.35,
+    },
+    abilities: ["mcpp:conqueror_cleave"],
+  });
+
+  WeaponRegistry.register({
+    id: "mcpp:chronoblade",
+    itemTypeId: "mcpp:chronoblade",
+    stats: {
+      attackDamageMcpp: 8 * HEALTH_SCALE,
+      attackSpeed: 8,
+      armorPenetration: 0.05,
+      criticalChance: 0.05,
+      knockback: 0,
+    },
+  });
+
+  WeaponRegistry.register({id:"mcpp:arcane_spear",itemTypeId:"mcpp:arcane_spear",stats:{attackDamageMcpp:9*HEALTH_SCALE,attackSpeed:15,armorPenetration:0.2,criticalChance:0.05,knockback:0.3}});
+  WeaponRegistry.register({id:"mcpp:frost_hammer",itemTypeId:"mcpp:frost_hammer",stats:{attackDamageMcpp:11*HEALTH_SCALE,attackSpeed:22,armorPenetration:0.05,criticalChance:0,knockback:1}});
+  WeaponRegistry.register({id:"mcpp:shadow_dagger",itemTypeId:"mcpp:shadow_dagger",stats:{attackDamageMcpp:6*HEALTH_SCALE,attackSpeed:7,armorPenetration:0.1,criticalChance:0.15,knockback:0}});
 }

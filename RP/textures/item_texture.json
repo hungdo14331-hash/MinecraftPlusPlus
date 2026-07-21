@@ -1,0 +1,54 @@
+{
+  "resource_pack_name": "Minecraft++",
+  "texture_name": "atlas.items",
+  "texture_data": {
+    "mcpp_vampire_book": {
+      "textures": "textures/items/vampire_book"
+    },
+    "mcpp_sloth_book": {
+      "textures": "textures/items/sloth_book"
+    },
+    "mcpp_momentum_book": {
+      "textures": "textures/items/momentum_book"
+    },
+    "mcpp_bounty_book": {
+      "textures": "textures/items/bounty_book"
+    },
+    "mcpp_piercing_book": {
+      "textures": "textures/items/piercing_book"
+    },
+    "mcpp_decay_book": {
+      "textures": "textures/items/decay_book"
+    },
+    "mcpp_frostbite_book": {
+      "textures": "textures/items/frostbite_book"
+    },
+    "mcpp_critical_book": {
+      "textures": "textures/items/critical_book"
+    },
+    "mcpp_parry_book": {
+      "textures": "textures/items/parry_book"
+    },
+    "mcpp_earthshatter_book": {
+      "textures": "textures/items/earthshatter_book"
+    },
+    "mcpp_vein_miner_book": {
+      "textures": "textures/items/vein_miner_book"
+    },
+    "mcpp_conqueror_greatsword": {
+      "textures": "textures/items/conqueror_greatsword"
+    },
+    "mcpp_immortal_heart": { "textures": "textures/items/immortal_heart" },
+    "mcpp_hunter_eye": { "textures": "textures/items/hunter_eye" },
+    "mcpp_wind_talisman": { "textures": "textures/items/wind_talisman" },
+    "mcpp_chronoblade": { "textures": "textures/items/chronoblade" },
+    "mcpp_fortress_core": { "textures": "textures/items/fortress_core" },
+    "mcpp_life_relic": { "textures": "textures/items/life_relic" },
+    "mcpp_royal_charm": { "textures": "textures/items/royal_charm" },
+    "mcpp_arcane_spear": { "textures": "textures/items/arcane_spear" },
+    "mcpp_frost_hammer": { "textures": "textures/items/frost_hammer" },
+    "mcpp_shadow_dagger": { "textures": "textures/items/shadow_dagger" },
+    "mcpp_awakening_tome": { "textures": "textures/items/awakening_tome" },
+    "mcpp_mastery_codex": { "textures": "textures/items/mastery_codex" }
+  }
+}

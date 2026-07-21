@@ -3,6 +3,7 @@ dist/
 BP/scripts/main.js
 BP/manifest.json
 RP/manifest.json
+src/scripts/core/config/generated_version.ts
 *.mcaddon
 *.log
 .DS_Store

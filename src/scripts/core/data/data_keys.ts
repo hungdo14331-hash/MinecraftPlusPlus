@@ -4,4 +4,5 @@ export const DataKeys = {
   itemDataVersion: "mcpp:item_data_version",
   /** JSON: { [enchantId]: level } */
   itemEnchants: "mcpp:enchants",
+  arcaneCoinBalance: "mcpp:arcane_coin_balance",
 };

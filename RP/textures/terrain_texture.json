@@ -1,0 +1,23 @@
+{
+  "resource_pack_name": "Minecraft++",
+  "texture_name": "atlas.terrain",
+  "padding": 8,
+  "num_mip_levels": 4,
+  "texture_data": {
+    "mcpp_arcane_table_top": {
+      "textures": "textures/blocks/arcane_table_top"
+    },
+    "mcpp_arcane_table_side": {
+      "textures": "textures/blocks/arcane_table_side"
+    },
+    "mcpp_arcane_table_bottom": {
+      "textures": "textures/blocks/arcane_table_bottom"
+    },
+    "mcpp_arcane_table_book": {
+      "textures": "textures/blocks/arcane_table_book"
+    },
+    "mcpp_vampire_book": {
+      "textures": "textures/items/vampire_book"
+    }
+  }
+}

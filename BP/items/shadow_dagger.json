@@ -1,0 +1,1 @@
+{"format_version":"1.20.50","minecraft:item":{"description":{"identifier":"mcpp:shadow_dagger"},"components":{"minecraft:display_name":{"value":"§r§5Dao Găm Bóng Tối"},"minecraft:icon":{"texture":"mcpp_shadow_dagger"},"minecraft:glint":true,"minecraft:max_stack_size":1,"minecraft:damage":6,"minecraft:durability":{"max_durability":1100},"minecraft:hand_equipped":true}}}

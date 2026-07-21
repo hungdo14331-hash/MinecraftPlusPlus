@@ -1,0 +1,59 @@
+{
+  "format_version": "1.26.0",
+  "minecraft:block": {
+    "description": {
+      "identifier": "mcpp:arcane_enchanting_table",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:display_name": "Arcane Enchanting Table",
+      "minecraft:geometry": {
+        "identifier": "geometry.mcpp.arcane_enchanting_table"
+      },
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "mcpp_arcane_table_side",
+          "render_method": "opaque"
+        },
+        "side": {
+          "texture": "mcpp_arcane_table_side",
+          "render_method": "opaque"
+        },
+        "top": {
+          "texture": "mcpp_arcane_table_top",
+          "render_method": "opaque"
+        },
+        "bottom": {
+          "texture": "mcpp_arcane_table_bottom",
+          "render_method": "opaque"
+        },
+        "page": {
+          "texture": "mcpp_arcane_table_book",
+          "render_method": "opaque"
+        },
+        "cover": {
+          "texture": "mcpp_vampire_book",
+          "render_method": "opaque"
+        }
+      },
+      "minecraft:collision_box": {
+        "origin": [-8, 0, -8],
+        "size": [16, 12, 16]
+      },
+      "minecraft:selection_box": {
+        "origin": [-8, 0, -8],
+        "size": [16, 15, 16]
+      },
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 5
+      },
+      "minecraft:destructible_by_explosion": {
+        "explosion_resistance": 1200
+      },
+      "minecraft:light_emission": 4,
+      "minecraft:map_color": "#171225"
+    }
+  }
+}

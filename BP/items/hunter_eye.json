@@ -1,0 +1,1 @@
+{"format_version":"1.20.50","minecraft:item":{"description":{"identifier":"mcpp:hunter_eye"},"components":{"minecraft:display_name":{"value":"§r§bMắt Thần Thợ Săn"},"minecraft:icon":{"texture":"mcpp_hunter_eye"},"minecraft:glint":true,"minecraft:max_stack_size":1,"minecraft:keep_on_death":{}}}}

@@ -23,16 +23,16 @@ export function resolveCriticalMultiplier(
   return { multiplier, critical: true };
 }
 
-export function resolveAttackSpeedRatio(
-  elapsedTicks: number,
-  requiredTicks: number,
-  floor: number = CombatConstants.ATTACK_SPEED_MIN_RATIO
-): { ratio: number; canTrigger: boolean } {
-  if (requiredTicks <= 0 || elapsedTicks >= requiredTicks) {
-    return { ratio: 1, canTrigger: true };
-  }
-  const raw = elapsedTicks / requiredTicks;
-  return { ratio: Math.max(floor, raw), canTrigger: false };
+/**
+ * Cong cung (hard gate) cho toc danh: khac voi ban cu (thuong/phat theo ty le), ham nay
+ * chi tra ve true/false. Neu chua du requiredTicks ke tu don THAT gan nhat, don nay bi
+ * CHAN HOAN TOAN (khong damage, khong bonus, khong hieu ung) — du click nhanh den dau,
+ * chi co 1 don duoc tinh la that moi requiredTicks tick. Xem attack_speed_service.ts:
+ * dong ho chi duoc cap nhat khi don duoc CHAP NHAN, khong phai moi lan click.
+ */
+export function resolveAttackGate(elapsedTicks: number, requiredTicks: number): { allowed: boolean } {
+  if (requiredTicks <= 0) return { allowed: true };
+  return { allowed: elapsedTicks >= requiredTicks };
 }
 
 export function scalePvpBonus(bonusAmount: number, isPvp: boolean): number {

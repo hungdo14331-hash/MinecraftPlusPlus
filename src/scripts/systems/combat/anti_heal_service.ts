@@ -34,6 +34,8 @@ class AntiHealServiceImpl {
     return this.getReduction(target) > 0;
   }
 
+  clear(target:Entity):boolean { return this.records.delete(target.id); }
+
   sweep(): void {
     const now = system.currentTick;
     for (const [k, v] of this.records) if (now > v.expiryTick) this.records.delete(k);

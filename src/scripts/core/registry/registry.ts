@@ -5,11 +5,13 @@ export class Registry<T extends { id: string }> {
   private items = new Map<string, T>();
   private frozen = false;
 
-  constructor(private kind: string) {}
+  constructor(private kind: string, private allowMinecraftIds = false) {}
 
   register(def: T): void {
     if (this.frozen) throw new Error(`${this.kind} registry da freeze — khong duoc register muon`);
-    assertValidId(def.id, `${this.kind} registry`);
+    if (!(this.allowMinecraftIds && /^minecraft:[a-z0-9_]+$/.test(def.id))) {
+      assertValidId(def.id, `${this.kind} registry`);
+    }
     if (this.items.has(def.id)) throw new Error(`${this.kind} trung id: ${def.id}`);
     this.items.set(def.id, def);
   }

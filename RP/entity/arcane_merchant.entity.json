@@ -1,0 +1,27 @@
+{
+  "format_version": "1.8.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "mcpp:arcane_merchant",
+      "materials": { "default": "witch" },
+      "textures": { "default": "textures/entity/arcane_merchant" },
+      "geometry": { "default": "geometry.villager.witch.v1.8" },
+      "scripts": { "scale": "0.9375" },
+      "animations": {
+        "villager_general": "animation.villager.general",
+        "look_at_target": "animation.common.look_at_target",
+        "general": "animation.witch.general",
+        "move": "animation.villager.move"
+      },
+      "animation_controllers": [
+        { "general": "controller.animation.witch.general" },
+        { "move": "controller.animation.villager.move" }
+      ],
+      "render_controllers": ["controller.render.witch"],
+      "spawn_egg": {
+        "base_color": "#24152f",
+        "overlay_color": "#b04cff"
+      }
+    }
+  }
+}

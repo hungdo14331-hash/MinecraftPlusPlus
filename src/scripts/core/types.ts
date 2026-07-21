@@ -7,6 +7,8 @@ export interface OnHitEffectDefinition {
   /** Amplifier theo chuan Minecraft: 0 = cap I, 1 = cap II, 2 = cap III... */
   amplifier: number;
   durationTicks: number;
+  /** Neu co, item dang cam phai co enchant nay (bat ky cap nao) moi kich hoat hieu ung. */
+  requiredEnchantment?: string;
 }
 
 export interface WeaponStats {
@@ -41,12 +43,25 @@ export interface AbilityDefinition {
 
 export interface EnchantDefinition {
   id: string;
+  displayName: string;
   maxLevel: number;
   conflicts?: string[];
+  /** Cac hau to typeId item hop le, vi du "_sword". */
+  allowedItemSuffixes?: string[];
 }
 
 export interface CurrencyDefinition {
   id: string;
+  displayName: string;
+  symbol: string;
+}
+
+export interface MobRewardDefinition {
+  id: string;
+  minCoins: number;
+  maxCoins: number;
+  isBoss?: boolean;
+  varietyPenalty?: boolean;
 }
 
 export interface StructureDefinition {
