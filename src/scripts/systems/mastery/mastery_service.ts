@@ -9,10 +9,15 @@ import { applyMasteryAttributes } from "./mastery_modifiers";
 import { masteryBonus, masteryBonusAtRank } from "./mastery_modifiers";
 import { ABILITY_GUIDES, ROMAN_LEVELS } from "../../content/ability_catalog";
 import { MASTERY_REWARDS } from "../../content/mastery_rewards";
+import { pushHudNotification } from "../targeting/hud_notification_service";
+import { SPECIAL_WEAPONS } from "../../content/weapon_catalog";
+import { getDiscoveredWeaponIds } from "../weapons/weapon_identity_service";
+import { ADDON_VERSION } from "../../core/config/constants";
 
 const DATA_KEY = "mcpp:mastery_data";
 const AWAKENING_TOME = "mcpp:awakening_tome";
 const MASTERY_CODEX = "mcpp:mastery_codex";
+const ONBOARDING_KEY = "mcpp:onboarding_seen";
 const MAX_LEVEL = 50;
 
 const STATS = [
@@ -38,11 +43,26 @@ function pointCost(nextRank: number): number { return nextRank <= 5 ? 1 : 2; }
 export function initMasteryService(): void {
   EventBus.on(Events.World.ItemUse, (ev: any) => handleUse(ev.source, ev.itemStack));
   EventBus.on(Events.Combat.Death, (ev: any) => rewardKill(ev));
-  EventBus.on(Events.Lifecycle.PlayerSpawn, (ev:any) => system.run(() => ensureEarnedRewards(ev.player)));
+  EventBus.on(Events.Lifecycle.PlayerSpawn, (ev:any) => system.run(() => {
+    ensureEarnedRewards(ev.player);
+    if(ev.initialSpawn)showFirstJoinHint(ev.player);
+  }));
   system.afterEvents.scriptEventReceive.subscribe(ev => {
     if (ev.id !== "mcpp:mastery" || ev.sourceEntity?.typeId !== "minecraft:player") return;
     handleCommand(ev.sourceEntity as Player, ev.message);
   });
+}
+
+function showFirstJoinHint(player:Player):void{
+  if(PlayerStore.getJson<boolean>(player,ONBOARDING_KEY))return;
+  PlayerStore.setJson(player,ONBOARDING_KEY,true);
+  system.runTimeout(()=>{
+    if(!player.isValid)return;
+    player.sendMessage(`§5§lMinecraft++ v${ADDON_VERSION} §r§fđã sẵn sàng.`);
+    player.sendMessage("§7Bắt đầu bằng §dSách Thức Tỉnh§7. Sau đó dùng §5Bách Khoa Sức Mạnh §7để xem toàn bộ tiến trình.");
+    pushHudNotification(player,"§d✦ Chào mừng đến với Minecraft++",70,3);
+    try{player.playSound("random.levelup",{volume:0.65,pitch:1.05});}catch{}
+  },40);
 }
 
 function handleUse(player: Player, item: ItemStack): void {
@@ -79,7 +99,7 @@ function addXp(player: Player, amount: number): void {
   data.xp += Math.floor(amount); let gained = 0;
   while (data.level < MAX_LEVEL && data.xp >= xpForNext(data.level)) { data.xp -= xpForNext(data.level); data.level++; data.points++; gained++; }
   if (data.level >= MAX_LEVEL) data.xp = 0; save(player, data);
-  player.onScreenDisplay.setActionBar(`§b✦ Mastery +${amount} XP${gained ? ` §d| Level ${data.level}!` : ""}`);
+  pushHudNotification(player,`§b✦ Mastery +${amount} XP${gained ? ` §d| Level ${data.level}!` : ""}`,gained?60:30,gained?3:1);
 }
 
 async function openCodex(player: Player): Promise<void> {
@@ -89,19 +109,41 @@ async function openCodex(player: Player): Promise<void> {
   try {
     const need = data.level >= MAX_LEVEL ? "MAX" : `${data.xp}/${xpForNext(data.level)}`;
     const res = await new ActionFormData().title("§5§lBách Khoa Sức Mạnh").header(`§dCấp ${data.level}/${MAX_LEVEL} §7| §f${need} XP`).body(`§bĐiểm chưa dùng: ${data.points}\n§7Chọn bảng muốn xem:`)
+      .button("§5Hướng dẫn Minecraft++\n§8Vòng chơi, tiến trình và cách bắt đầu", "textures/items/awakening_tome")
       .button("§aNâng cấp chỉ số\n§8Phân phối điểm sức mạnh", "textures/items/mastery_codex")
       .button("§bChỉ số hiện tại\n§8Xem toàn bộ hiệu quả đang có")
       .button("§dKhả năng đặc biệt\n§8Cấp độ, cách dùng và giá sách", "textures/items/critical_book")
+      .button("§cBộ sưu tập vũ khí\n§8Nguồn nhận, nội tại và chủ động", "textures/items/void_reaper")
       .button("§6Phần thưởng Tinh Thông\n§8Di vật nhận được khi max chỉ số", "textures/items/conqueror_greatsword")
       .button("§cReset chỉ số\n§8Hoàn lại toàn bộ điểm đã dùng")
       .show(player);
     if (res.canceled || res.selection === undefined) return;
-    if (res.selection === 0) await showUpgradeTable(player);
-    if (res.selection === 1) await showCurrentStats(player);
-    if (res.selection === 2) await showAbilityTable(player);
-    if (res.selection === 3) await showMasteryRewards(player);
-    if (res.selection === 4) await confirmStatReset(player);
+    if (res.selection === 0) await showQuickGuide(player);
+    if (res.selection === 1) await showUpgradeTable(player);
+    if (res.selection === 2) await showCurrentStats(player);
+    if (res.selection === 3) await showAbilityTable(player);
+    if (res.selection === 4) await showWeaponCollection(player);
+    if (res.selection === 5) await showMasteryRewards(player);
+    if (res.selection === 6) await confirmStatReset(player);
   } catch (e) { log.error("Mastery Codex UI loi:", e); } finally { openMenus.delete(player.id); }
+}
+async function showQuickGuide(player:Player):Promise<void>{
+  await new ActionFormData().title(`§5§lMinecraft++ v${ADDON_VERSION}`).body(
+    "§d1. THỨC TỈNH\n§7Chế tạo và sử dụng Sách Thức Tỉnh để mở Arcane Mastery.\n\n"+
+    "§b2. PHÁT TRIỂN\n§7Diệt quái nhận Mastery XP và Arcane Coin. Dùng điểm để nâng chỉ số.\n\n"+
+    "§63. SĂN TRANG BỊ\n§7Mua sách cấp I từ Merchant, ghép sách tại Bàn Phù Phép Arcane và tìm vũ khí hiếm trong công trình.\n\n"+
+    "§c4. TINH THÔNG\n§7Nâng tối đa từng chỉ số để nhận di vật hoặc vũ khí độc quyền.\n\n"+
+    "§e5. KỸ NĂNG CHỦ ĐỘNG\n§7Cầm vũ khí đặc biệt, cúi và vung vũ khí để thi triển. Mỗi kỹ năng có hồi chiêu riêng.\n\n"+
+    "§8Mẹo: cầm một vũ khí đặc biệt để tự thêm lore và ghi nhận vào Bộ sưu tập."
+  ).button("§aĐã hiểu").show(player);
+}
+async function showWeaponCollection(player:Player):Promise<void>{
+  const discovered=getDiscoveredWeaponIds(player);const form=new ActionFormData().title("§c§lBộ sưu tập vũ khí").body(`§fĐã khám phá: §d${discovered.size}/${SPECIAL_WEAPONS.length}\n§7Cầm hoặc nhặt vũ khí để ghi nhận vĩnh viễn.`);
+  for(const weapon of SPECIAL_WEAPONS){const owned=playerHasItem(player,weapon.itemId);const known=discovered.has(weapon.itemId);const status=owned?"§aĐANG SỞ HỮU":known?"§eĐÃ KHÁM PHÁ":"§8CHƯA KHÁM PHÁ";form.button(`${weapon.rarityColor}${weapon.name}\n${status} §8• ${weapon.rarity}`,weapon.icon);}
+  const res=await form.show(player);if(res.canceled||res.selection===undefined)return;const weapon=SPECIAL_WEAPONS[res.selection];
+  await new ActionFormData().title(`${weapon.rarityColor}${weapon.name}`).body(
+    `§fPhân hạng: ${weapon.rarityColor}${weapon.rarity}\n§fLoại: §7${weapon.weaponClass}\n§fNguồn: §d${weapon.source}\n§fThông số: §7${weapon.combatInfo}\n\n§d✦ NỘI TẠI — ${weapon.ability}\n§fKích hoạt: §7${weapon.trigger}\n§7${weapon.description}\n\n§6◆ CHỦ ĐỘNG — ${weapon.activeSkill}\n§fKích hoạt: §7${weapon.activeTrigger}\n§7${weapon.activeDescription}`
+  ).button("§aĐã hiểu").show(player);
 }
 async function showMasteryRewards(player:Player):Promise<void>{
   const data=getMasteryData(player);const form=new ActionFormData().title("§6Phần thưởng Tinh Thông").body("§7Mỗi phần thưởng chỉ được nhận một lần. Reset chỉ số không cấp lại vật phẩm.");

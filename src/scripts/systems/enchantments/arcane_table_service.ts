@@ -13,6 +13,7 @@ import { matchesItemSuffix } from "../../core/utils/item_types";
 import { TickScheduler } from "../../core/scheduler/tick_scheduler";
 
 const TABLE_ID = "mcpp:arcane_enchanting_table";
+const ANIMATED_BOOK_ID = "mcpp:arcane_table_book";
 const openMenus = new Set<string>();
 interface ArcaneTableRef { dimensionId:string; location:Vector3; }
 const trackedTables=new Map<string,ArcaneTableRef>();
@@ -33,9 +34,19 @@ interface BookSlot {
 export function initArcaneTableService(): void {
   try{
     world.afterEvents.playerPlaceBlock.subscribe((ev:any)=>{
-      if(ev.block?.typeId===TABLE_ID)trackTable({dimensionId:ev.player.dimension.id,location:ev.block.location});
+      if(ev.block?.typeId!==TABLE_ID)return;
+      const ref={dimensionId:ev.player.dimension.id,location:{...ev.block.location}};
+      trackTable(ref);system.run(()=>ensureAnimatedBook(ref));
     });
   }catch{/* API cũ: bàn sẽ được theo dõi từ lần tương tác đầu tiên. */}
+  try{
+    world.afterEvents.playerBreakBlock.subscribe((ev:any)=>{
+      const brokenId=ev.brokenBlockPermutation?.type?.id??ev.brokenBlockPermutation?.typeId;
+      if(brokenId!==TABLE_ID)return;
+      const ref={dimensionId:ev.player.dimension.id,location:{...ev.block.location}};
+      trackedTables.delete(tableKey(ref));system.run(()=>removeAnimatedBooks(ref));
+    });
+  }catch{/* API cũ: cleanup van duoc thuc hien boi idle tracker. */}
   TickScheduler.every("arcane_table_idle_fx",20,playIdleEffects);
   world.beforeEvents.playerInteractWithBlock.subscribe((ev) => {
     if (ev.block?.typeId !== TABLE_ID || ev.isFirstEvent === false) return;
@@ -47,6 +58,7 @@ export function initArcaneTableService(): void {
     // Before-event la restricted context: hoan viec mo UI sang tick ke tiep.
     system.run(() => {
       if (!player.isValid || openMenus.has(player.id)) return;
+      ensureAnimatedBook(tableRef);
       openMenus.add(player.id);
       void showMainMenu(player)
         .catch((e) => log.error("ArcaneTable UI loi:", e))
@@ -57,12 +69,32 @@ export function initArcaneTableService(): void {
 
 function tableKey(ref:ArcaneTableRef):string{return `${ref.dimensionId}:${ref.location.x},${ref.location.y},${ref.location.z}`;}
 function trackTable(ref:ArcaneTableRef):void{trackedTables.set(tableKey(ref),ref);}
-function centerOf(ref:ArcaneTableRef):Vector3{return{x:ref.location.x+0.5,y:ref.location.y+1.1,z:ref.location.z+0.5};}
+function centerOf(ref:ArcaneTableRef):Vector3{return{x:ref.location.x+0.5,y:ref.location.y+1.25,z:ref.location.z+0.5};}
+function animatedBookOrigin(ref:ArcaneTableRef):Vector3{return{x:ref.location.x+0.5,y:ref.location.y+0.82,z:ref.location.z+0.5};}
 function dimensionOf(ref:ArcaneTableRef):Dimension|undefined{try{return world.getDimension(ref.dimensionId);}catch{return undefined;}}
+function nearbyAnimatedBooks(ref:ArcaneTableRef):any[]{
+  const dimension=dimensionOf(ref);if(!dimension)return[];
+  try{return dimension.getEntities({type:ANIMATED_BOOK_ID,location:animatedBookOrigin(ref),maxDistance:0.42}) as any[];}catch{return[];}
+}
+function ensureAnimatedBook(ref:ArcaneTableRef):void{
+  const dimension=dimensionOf(ref);if(!dimension)return;
+  try{
+    if(dimension.getBlock(ref.location)?.typeId!==TABLE_ID){removeAnimatedBooks(ref);return;}
+    const books=nearbyAnimatedBooks(ref);
+    if(books.length===0)dimension.spawnEntity(ANIMATED_BOOK_ID,animatedBookOrigin(ref));
+    for(let index=1;index<books.length;index++)books[index]?.remove?.();
+  }catch(e){log.debug("Khong the tao animated book:",e);}
+}
+function removeAnimatedBooks(ref:ArcaneTableRef):void{
+  for(const book of nearbyAnimatedBooks(ref)){try{book.remove();}catch{/* Entity co the da bi xoa. */}}
+}
 function playIdleEffects():void{
   for(const [key,ref] of trackedTables){const dimension=dimensionOf(ref);if(!dimension){trackedTables.delete(key);continue;}
-    try{if(dimension.getBlock(ref.location)?.typeId!==TABLE_ID){trackedTables.delete(key);continue;}if(dimension.getPlayers({location:ref.location,maxDistance:9}).length===0)continue;
-      dimension.spawnParticle("minecraft:basic_portal_particle",centerOf(ref));
+    try{if(dimension.getBlock(ref.location)?.typeId!==TABLE_ID){removeAnimatedBooks(ref);trackedTables.delete(key);continue;}ensureAnimatedBook(ref);if(dimension.getPlayers({location:ref.location,maxDistance:9}).length===0)continue;
+      const center=centerOf(ref);
+      dimension.spawnParticle("minecraft:basic_portal_particle",center);
+      dimension.spawnParticle("minecraft:basic_portal_particle",{x:center.x+0.28,y:center.y+0.12,z:center.z-0.22});
+      dimension.spawnParticle("minecraft:basic_portal_particle",{x:center.x-0.25,y:center.y+0.05,z:center.z+0.2});
     }catch{/* Hiệu ứng không được làm gián đoạn gameplay. */}
   }
 }
@@ -75,10 +107,11 @@ function playTableSuccess(player:Player,level:number,mode:"apply"|"combine"):voi
 }
 
 async function showMainMenu(player: Player): Promise<void> {
+  const balance = CurrencyService.getBalance(player);
   const response = await new ActionFormData()
     .title("§5Arcane Enchanting Table")
     .header("§d§lMa thuật tùy chỉnh")
-    .body("§7Bàn sẽ đọc sách và công cụ trực tiếp từ inventory.\n\n§fChọn một thao tác:")
+    .body(`§7Bàn đọc sách và công cụ trực tiếp từ inventory.\n§dSố dư: ${balance} ✦\n\n§fCùng cấp: §dII + II → III§f. Sách cấp cao hơn sẽ thay cấp thấp hơn.\n\n§fChọn một thao tác:`)
     .button("§dGắn sách vào công cụ\n§8Tiêu thụ 1 sách", "textures/items/vampire_book")
     .button("§bGhép hai sách cùng cấp\n§8Tạo sách cấp cao hơn", "textures/items/momentum_book")
     .show(player);
@@ -129,6 +162,12 @@ function itemName(item: ItemStack): string {
   return item.nameTag || item.typeId.split(":").pop()?.replace(/_/g, " ") || item.typeId;
 }
 
+function resolveAppliedLevel(existingLevel: number, bookLevel: number, maxLevel: number): number | undefined {
+  if (existingLevel < bookLevel) return bookLevel;
+  if (existingLevel === bookLevel && existingLevel < maxLevel) return existingLevel + 1;
+  return undefined;
+}
+
 async function chooseBook(player: Player, title: string, books: BookSlot[]): Promise<BookSlot | undefined> {
   if (books.length === 0) {
     player.sendMessage("§cKhông tìm thấy custom enchanted book phù hợp trong inventory.");
@@ -150,31 +189,42 @@ async function applyBookFlow(player: Player): Promise<void> {
   if (!selectedBook) return;
 
   const suffixes = selectedBook.allowedItemSuffixes ?? [];
-  const tools: Array<{ slot: number; item: ItemStack }> = [];
+  const tools: Array<{ slot: number; item: ItemStack; existingLevel: number; outputLevel: number }> = [];
   for (let slot = 0; slot < container.size; slot++) {
     if (slot === selectedBook.slot) continue;
     const item = container.getItem(slot);
-    if (item && suffixes.some((suffix) => matchesItemSuffix(item.typeId,suffix))) tools.push({ slot, item });
+    if (!item || !suffixes.some((suffix) => matchesItemSuffix(item.typeId,suffix))) continue;
+    const existingLevel = getCustomEnchantLevel(item, selectedBook.enchantId);
+    const outputLevel = resolveAppliedLevel(existingLevel, selectedBook.level, selectedBook.maxLevel);
+    if (outputLevel !== undefined) tools.push({ slot, item, existingLevel, outputLevel });
   }
   if (tools.length === 0) {
-    player.sendMessage("§cKhông có công cụ tương thích trong inventory.");
+    player.sendMessage(`§cKhông có công cụ có thể nhận ${selectedBook.displayName} ${romanLevel(selectedBook.level)}. Công cụ cùng cấp chỉ nâng được khi chưa đạt cấp tối đa.`);
     return;
   }
 
   const form = new ActionFormData()
     .title("§5Chọn công cụ")
-    .body(`Gắn ${selectedBook.displayName} ${selectedBook.level} vào:`);
-  for (const tool of tools) form.button(`${itemName(tool.item)}\n§7Slot ${tool.slot + 1}`);
+    .body(`§fSách: §d${selectedBook.displayName} ${romanLevel(selectedBook.level)}\n§7Chọn công cụ; cấp hiện tại và kết quả được ghi bên dưới.`);
+  for (const tool of tools) {
+    const current = tool.existingLevel > 0 ? romanLevel(tool.existingLevel) : "Chưa có";
+    form.button(`${itemName(tool.item)}\n§7${current} §f→ §a${romanLevel(tool.outputLevel)} §8| Slot ${tool.slot + 1}`);
+  }
   const response = await form.show(player);
   if (response.canceled || response.selection === undefined) return;
 
   const chosenTool = tools[response.selection];
-  const fee = APPLY_FEES[selectedBook.level] ?? APPLY_FEES[APPLY_FEES.length - 1];
+  const existingLevel = chosenTool.existingLevel;
+  const outputLevel = chosenTool.outputLevel;
+  const fee = APPLY_FEES[outputLevel] ?? APPLY_FEES[APPLY_FEES.length - 1];
   const balance = CurrencyService.getBalance(player);
+  const upgradeText = existingLevel > 0
+    ? `§7Nâng: §d${romanLevel(existingLevel)} §f→ §a${romanLevel(outputLevel)}`
+    : `§7Nhận: §d${selectedBook.displayName} ${romanLevel(outputLevel)}`;
   const confirmed = await confirmAction(
     player,
     "§5Xác nhận phù phép",
-    `§f${itemName(chosenTool.item)}\n§7Nhận: §d${selectedBook.displayName} ${romanLevel(selectedBook.level)}\n\n§cCuốn sách sẽ bị tiêu thụ.\n§dPhí: ${fee} ✦ §7(Số dư: ${balance} ✦)`
+    `§f${itemName(chosenTool.item)}\n${upgradeText}\n\n§cCuốn sách sẽ bị tiêu thụ.\n§dPhí: ${fee} ✦ §7(Số dư: ${balance} ✦)`
   );
   if (!confirmed) return;
 
@@ -192,9 +242,10 @@ async function applyBookFlow(player: Player): Promise<void> {
     return;
   }
 
-  const existingLevel = getCustomEnchantLevel(currentTool, selectedBook.enchantId);
-  if (existingLevel >= selectedBook.level) {
-    player.sendMessage("§cCông cụ đã có enchant cùng cấp hoặc cao hơn.");
+  const latestExistingLevel = getCustomEnchantLevel(currentTool, selectedBook.enchantId);
+  const latestOutputLevel = resolveAppliedLevel(latestExistingLevel, selectedBook.level, selectedBook.maxLevel);
+  if (latestOutputLevel !== outputLevel) {
+    player.sendMessage("§cCấp enchant trên công cụ đã thay đổi; thao tác bị hủy để tránh mất item.");
     return;
   }
 
@@ -203,11 +254,11 @@ async function applyBookFlow(player: Player): Promise<void> {
     return;
   }
 
-  setCustomEnchantLevel(currentTool, selectedBook.enchantId, selectedBook.level);
+  setCustomEnchantLevel(currentTool, selectedBook.enchantId, outputLevel);
   container.setItem(chosenTool.slot, currentTool);
   container.setItem(selectedBook.slot, undefined);
-  playTableSuccess(player,selectedBook.level,"apply");
-  player.sendMessage(`§aĐã gắn ${selectedBook.displayName} ${selectedBook.level} vào ${itemName(currentTool)}.`);
+  playTableSuccess(player,outputLevel,"apply");
+  player.sendMessage(`§aĐã nâng ${selectedBook.displayName} lên ${romanLevel(outputLevel)} trên ${itemName(currentTool)}.`);
 }
 
 async function combineBooksFlow(player: Player): Promise<void> {

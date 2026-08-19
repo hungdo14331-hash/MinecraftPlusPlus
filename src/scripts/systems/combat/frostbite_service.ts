@@ -1,4 +1,4 @@
-import { system, type Entity, type Player, type Vector3 } from "@minecraft/server";
+import { EntityComponentTypes, system, type Entity, type Player, type Vector3 } from "@minecraft/server";
 import { readMainhand } from "../../core/api/inventory_adapter";
 import { EventBus } from "../../core/events/event_bus";
 import { Events } from "../../core/events/event_names";
@@ -7,24 +7,34 @@ import { getCustomEnchantLevel } from "../../core/utils/custom_enchantments";
 import { log } from "../../core/utils/logger";
 import { isSwordItem } from "../../core/utils/item_types";
 
-const CHANCE = [0, 0.1, 0.15, 0.2] as const;
-const DURATION = [0, 20, 30, 40] as const;
+// Frostbite chu yeu la slow. Freeze hiem, ngan va co mien nhiem sau moi lan kich hoat.
+const CHANCE = [0, 0.03, 0.05, 0.08] as const;
+const SLOW_DURATION = [0, 20, 30, 40] as const;
+const FREEZE_DURATION = [0, 8, 10, 12] as const;
 const SPEED_FACTOR = [1, 0.9, 0.8, 0.7] as const;
 const BOSS_IMMUNITY_TICKS = 160;
+const FREEZE_IMMUNITY_TICKS = 120;
+const BOSS_FROSTBITE_IMMUNITY_TICKS = 240;
 const BOSSES = new Set(["minecraft:warden", "minecraft:wither", "minecraft:ender_dragon"]);
 
-interface FrostbiteRecord {
+interface SlowRecord {
   entity: Entity;
-  slowUntil: number;
-  speedFactor: number;
-  previous: Vector3;
-  freezeUntil: number;
-  freezeAnchor?: Vector3;
-  grantBossImmunity?: boolean;
+  until: number;
+  factor: number;
+  originalMovement?: number;
 }
 
-const records = new Map<string, FrostbiteRecord>();
+interface MovementLockRecord {
+  entity: Entity;
+  until: number;
+  anchor: Vector3;
+  grantBossImmunity: boolean;
+}
+
+const slowRecords = new Map<string, SlowRecord>();
+const movementLocks = new Map<string, MovementLockRecord>();
 const bossImmuneUntil = new Map<string, number>();
+const frostbiteImmuneUntil = new Map<string, number>();
 
 export function initFrostbiteService(): void {
   EventBus.on(Events.Combat.Hurt, (ev: any) => {
@@ -52,68 +62,113 @@ function applyFromHit(ev: any): void {
 
 function applyFrostbite(target: Entity, level: 1 | 2 | 3): void {
   const now = system.currentTick;
-  const duration = DURATION[level];
-  const existing = records.get(target.id);
-  const record: FrostbiteRecord = existing ?? {
-    entity: target,
-    slowUntil: now,
-    speedFactor: SPEED_FACTOR[level],
-    previous: { ...target.location },
-    freezeUntil: now,
-  };
-
-  // Moi don Frostbite luon slow; cap moi thay the bang muc slow manh hon trong thoi gian moi.
-  record.entity = target;
-  record.slowUntil = now + duration;
-  record.speedFactor = SPEED_FACTOR[level];
-  record.previous = { ...target.location };
+  applySlow(target, SPEED_FACTOR[level], SLOW_DURATION[level]);
 
   const isBoss = BOSSES.has(target.typeId);
-  const canFreeze = !isBoss || now >= (bossImmuneUntil.get(target.id) ?? 0);
-  if (canFreeze && Math.random() < CHANCE[level]) {
-    const freezeDuration = isBoss ? Math.max(1, Math.floor(duration / 2)) : duration;
-    record.freezeUntil = Math.max(record.freezeUntil, now + freezeDuration);
-    record.freezeAnchor = { ...target.location };
-    record.grantBossImmunity = isBoss;
+  const canFreeze = now >= (frostbiteImmuneUntil.get(target.id) ?? 0)
+    && (!isBoss || now >= (bossImmuneUntil.get(target.id) ?? 0));
+  const freezeChance = isBoss ? CHANCE[level] * 0.5 : CHANCE[level];
+  if (!canFreeze || Math.random() >= freezeChance) return;
+
+  const baseDuration = FREEZE_DURATION[level];
+  const duration = isBoss ? Math.max(1, Math.floor(baseDuration / 2)) : baseDuration;
+  setMovementLock(target, duration, false);
+  const immunity = isBoss ? BOSS_FROSTBITE_IMMUNITY_TICKS : FREEZE_IMMUNITY_TICKS;
+  frostbiteImmuneUntil.set(target.id, now + duration + immunity);
+  if (isBoss) bossImmuneUntil.set(target.id, now + duration + immunity);
+}
+
+/**
+ * Giam truc tiep movement attribute thay vi teleport moi tick. Teleport lam AI bi reset
+ * duong di va trong game nhin giong nhu Freeze 100%.
+ */
+function applySlow(target: Entity, factor: number, durationTicks: number): void {
+  const now = system.currentTick;
+  const existing = slowRecords.get(target.id);
+  const record: SlowRecord = existing ?? {
+    entity: target,
+    until: now,
+    factor,
+  };
+  record.entity = target;
+  record.until = Math.max(record.until, now + durationTicks);
+  record.factor = Math.min(record.factor, factor);
+
+  try {
+    const movement = target.getComponent(EntityComponentTypes.Movement) as any;
+    if (!movement || typeof movement.setCurrentValue !== "function") throw new Error("movement component unavailable");
+    if (record.originalMovement === undefined) {
+      const current = Number(movement.currentValue);
+      const fallback = Number(movement.defaultValue);
+      record.originalMovement = Number.isFinite(current) && current > 0
+        ? current
+        : Number.isFinite(fallback) && fallback > 0 ? fallback : undefined;
+    }
+    if (record.originalMovement === undefined || movement.setCurrentValue(record.originalMovement * record.factor) === false) {
+      throw new Error("movement attribute rejected value");
+    }
+  } catch {
+    // Fallback cho entity khong cung cap movement component. Slowness chi la du phong;
+    // phan lon mob va player se dung attribute chinh xac 10/20/30%.
+    try {
+      const amplifier = factor <= 0.7 ? 1 : 0;
+      target.addEffect("slowness", durationTicks, { amplifier, showParticles: false });
+    } catch { /* Entity khong ho tro effect thi bo qua slow, khong khoa cung no. */ }
   }
-  records.set(target.id, record);
+  slowRecords.set(target.id, record);
+}
+
+function restoreMovement(record: SlowRecord): void {
+  if (record.originalMovement === undefined || !record.entity.isValid) return;
+  try {
+    const movement = record.entity.getComponent(EntityComponentTypes.Movement) as any;
+    movement?.setCurrentValue?.(record.originalMovement);
+  } catch { /* Entity co the bi xoa dung luc slow het han. */ }
+}
+
+function setMovementLock(target: Entity, durationTicks: number, grantBossImmunity: boolean): void {
+  const now = system.currentTick;
+  const existing = movementLocks.get(target.id);
+  movementLocks.set(target.id, {
+    entity: target,
+    until: Math.max(existing?.until ?? now, now + durationTicks),
+    anchor: { ...target.location },
+    grantBossImmunity: existing?.grantBossImmunity === true || grantBossImmunity,
+  });
 }
 
 function updateMovement(): void {
   const now = system.currentTick;
-  for (const [id, record] of records) {
+
+  for (const [id, record] of slowRecords) {
+    if (!record.entity.isValid || now > record.until) {
+      restoreMovement(record);
+      slowRecords.delete(id);
+    }
+  }
+
+  for (const [id, record] of movementLocks) {
     const entity = record.entity;
-    if (!entity.isValid || now > record.slowUntil) {
-      records.delete(id);
+    if (!entity.isValid) {
+      movementLocks.delete(id);
+      continue;
+    }
+    if (now > record.until) {
+      if (record.grantBossImmunity) bossImmuneUntil.set(id, now + BOSS_IMMUNITY_TICKS);
+      movementLocks.delete(id);
       continue;
     }
     try {
-      if (now <= record.freezeUntil && record.freezeAnchor) {
-        entity.clearVelocity();
-        entity.teleport(record.freezeAnchor);
-        record.previous = { ...record.freezeAnchor };
-        continue;
-      }
-      if (record.freezeAnchor) {
-        if (record.grantBossImmunity) bossImmuneUntil.set(id, now + BOSS_IMMUNITY_TICKS);
-        record.freezeAnchor = undefined;
-        record.grantBossImmunity = false;
-      }
-
-      const current = entity.location;
-      const corrected = {
-        x: record.previous.x + (current.x - record.previous.x) * record.speedFactor,
-        y: current.y,
-        z: record.previous.z + (current.z - record.previous.z) * record.speedFactor,
-      };
-      entity.teleport(corrected);
-      record.previous = corrected;
+      entity.clearVelocity();
+      entity.teleport(record.anchor);
     } catch (e) {
-      records.delete(id);
-      log.debug("Frostbite movement loi:", e);
+      movementLocks.delete(id);
+      log.debug("Movement lock loi:", e);
     }
   }
+
   for (const [id, until] of bossImmuneUntil) if (now > until) bossImmuneUntil.delete(id);
+  for (const [id, until] of frostbiteImmuneUntil) if (now > until) frostbiteImmuneUntil.delete(id);
 }
 
 /** Khoa chuyen dong dung chung cho Stagger/Freeze cua cac ability khac. */
@@ -125,19 +180,6 @@ export function applyMovementLock(target: Entity, durationTicks: number, useBoss
   const effectiveDuration = useBossRules && isBoss
     ? Math.max(1, Math.floor(durationTicks / 2))
     : durationTicks;
-  const existing = records.get(target.id);
-  const record: FrostbiteRecord = existing ?? {
-    entity: target,
-    slowUntil: now,
-    speedFactor: 1,
-    previous: { ...target.location },
-    freezeUntil: now,
-  };
-  record.entity = target;
-  record.slowUntil = Math.max(record.slowUntil, now + effectiveDuration);
-  record.freezeUntil = Math.max(record.freezeUntil, now + effectiveDuration);
-  record.freezeAnchor = { ...target.location };
-  record.grantBossImmunity = useBossRules && isBoss;
-  records.set(target.id, record);
+  setMovementLock(target, effectiveDuration, useBossRules && isBoss);
   return true;
 }

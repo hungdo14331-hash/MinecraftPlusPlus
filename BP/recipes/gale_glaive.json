@@ -1,0 +1,15 @@
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_shaped": {
+    "description": {"identifier": "mcpp:gale_glaive_recipe"},
+    "tags": ["crafting_table"],
+    "unlock": {"context": "AlwaysUnlocked"},
+    "pattern": [" PA", " BP", "B  "],
+    "key": {
+      "P": {"item": "minecraft:prismarine_shard"},
+      "A": {"item": "minecraft:amethyst_shard"},
+      "B": {"item": "minecraft:breeze_rod"}
+    },
+    "result": {"item": "mcpp:gale_glaive", "count": 1}
+  }
+}

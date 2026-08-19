@@ -10,12 +10,20 @@ const targets={
   "stronghold_library.json":0.25,"woodland_mansion.json":0.28,"shipwrecktreasure.json":0.18,
 };
 const books=["vampire","sloth","momentum","bounty","piercing","decay","frostbite","critical","parry","earthshatter","vein_miner"];
+const legendaryWeapons={
+  "ancient_city.json":{item:"mcpp:void_reaper",chance:0.025},
+  "end_city_treasure.json":{item:"mcpp:void_reaper",chance:0.04},
+  "bastion_treasure.json":{item:"mcpp:ember_cleaver",chance:0.035},
+  "nether_bridge.json":{item:"mcpp:ember_cleaver",chance:0.02},
+};
 fs.mkdirSync(outputRoot,{recursive:true});
 for(const [file,chance] of Object.entries(targets)){
   const source=path.join(sourceRoot,file);if(!fs.existsSync(source))throw new Error(`Thiếu loot table Mojang: ${source}`);
   const table=JSON.parse(fs.readFileSync(source,"utf8"));
   table.pools??=[];
   table.pools.push({rolls:1,conditions:[{condition:"random_chance",chance}],entries:books.map(id=>({type:"item",name:`mcpp:${id}_book_1`,weight:id==="vein_miner"?1:3}))});
+  const legendary=legendaryWeapons[file];
+  if(legendary)table.pools.push({rolls:1,conditions:[{condition:"random_chance",chance:legendary.chance}],entries:[{type:"item",name:legendary.item,weight:1}]});
   fs.writeFileSync(path.join(outputRoot,file),JSON.stringify(table,null,2)+"\n");
 }
 console.log(`Đã mở rộng ${Object.keys(targets).length} loot table vanilla từ bedrock-samples chính thức.`);

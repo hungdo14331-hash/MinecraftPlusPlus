@@ -22,6 +22,13 @@ export function applySlothToRequiredTicks(baseRequiredTicks: number, slothLevel:
   return Math.max(1, Math.ceil(safeBase / attackSpeedMultiplier));
 }
 
+/** Kiem tra cong toc danh KHONG cap nhat dong ho — cho SwingStrikeService peek truoc khi giang don. */
+export function peekAttackGate(attacker: Entity, requiredTicks: number | undefined): boolean {
+  if (!requiredTicks || requiredTicks <= 0) return true;
+  const elapsed = system.currentTick - (lastAcceptedHitTick.get(attacker.id) ?? -Infinity);
+  return resolveAttackGate(elapsed, requiredTicks).allowed;
+}
+
 export function resolveAttackSpeed(attacker: Entity, requiredTicks: number | undefined): { allowed: boolean } {
   if (!requiredTicks || requiredTicks <= 0) {
     return { allowed: true };

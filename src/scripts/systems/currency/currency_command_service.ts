@@ -2,6 +2,7 @@ import { system, type Player } from "@minecraft/server";
 import { CurrencyRegistry } from "../../core/registry/registries";
 import { log } from "../../core/utils/logger";
 import { ARCANE_COIN_ID, CurrencyService } from "./currency_service";
+import { pushHudNotification } from "../targeting/hud_notification_service";
 
 const COMMAND_ID = "mcpp:currency";
 
@@ -56,9 +57,5 @@ function showBalance(player: Player): void {
   if (!currency) return;
   const balance = CurrencyService.getBalance(player, ARCANE_COIN_ID);
   player.sendMessage(`§d${currency.symbol} ${currency.displayName}: §f${balance.toLocaleString("en-US")}`);
-  try {
-    player.onScreenDisplay.setActionBar(`§d${currency.symbol} ${balance.toLocaleString("en-US")} ${currency.displayName}`);
-  } catch {
-    // Chat message o tren van la fallback day du.
-  }
+  pushHudNotification(player,`§d${currency.symbol} ${balance.toLocaleString("en-US")} ${currency.displayName}`,45,1);
 }

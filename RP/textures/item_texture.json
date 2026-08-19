@@ -49,6 +49,11 @@
     "mcpp_frost_hammer": { "textures": "textures/items/frost_hammer" },
     "mcpp_shadow_dagger": { "textures": "textures/items/shadow_dagger" },
     "mcpp_awakening_tome": { "textures": "textures/items/awakening_tome" },
-    "mcpp_mastery_codex": { "textures": "textures/items/mastery_codex" }
+    "mcpp_mastery_codex": { "textures": "textures/items/mastery_codex" },
+    "mcpp_runeblade": { "textures": "textures/items/runeblade" },
+    "mcpp_titan_maul": { "textures": "textures/items/titan_maul" },
+    "mcpp_gale_glaive": { "textures": "textures/items/gale_glaive" },
+    "mcpp_ember_cleaver": { "textures": "textures/items/ember_cleaver" },
+    "mcpp_void_reaper": { "textures": "textures/items/void_reaper" }
   }
 }

@@ -475,6 +475,22 @@
           "weight": 1
         }
       ]
+    },
+    {
+      "rolls": 1,
+      "conditions": [
+        {
+          "condition": "random_chance",
+          "chance": 0.025
+        }
+      ],
+      "entries": [
+        {
+          "type": "item",
+          "name": "mcpp:void_reaper",
+          "weight": 1
+        }
+      ]
     }
   ]
 }

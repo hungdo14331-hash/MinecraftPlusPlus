@@ -15,6 +15,7 @@ import { log } from "../../core/utils/logger";
 import { CurrencyService } from "./currency_service";
 import { ABILITY_GUIDES, ROMAN_LEVELS } from "../../content/ability_catalog";
 import { MASTERY_REWARDS } from "../../content/mastery_rewards";
+import { SPECIAL_WEAPONS } from "../../content/weapon_catalog";
 
 const MERCHANT_ID = "mcpp:arcane_merchant";
 const RESTOCK_MS = 30 * 60 * 1000;
@@ -88,6 +89,7 @@ async function showMainMenu(player: Player, merchant: Entity): Promise<void> {
     .button("§aKho vật phẩm\n§8Nguyên liệu và đồ phiêu lưu", "textures/items/golden_apple")
     .button("§6Bán vật phẩm\n§8Đổi chiến lợi phẩm lấy xu", "textures/items/emerald")
     .button("§bBảng khả năng & giá\n§8Xem mọi cấp độ", "textures/items/mastery_codex")
+    .button("§cKho vũ khí đặc biệt\n§8Nguồn nhận, nội tại và chủ động", "textures/items/runeblade")
     .button("§6Bộ sưu tập Tinh Thông\n§8Xem 8 phần thưởng đặc biệt", "textures/items/conqueror_greatsword")
     .show(player);
   if (response.canceled) return;
@@ -95,7 +97,15 @@ async function showMainMenu(player: Player, merchant: Entity): Promise<void> {
   if(response.selection===1)await showBuyMenu(player,merchant,"goods");
   if(response.selection===2)await showSellMenu(player,merchant);
   if(response.selection===3)await showAbilityGuide(player);
-  if(response.selection===4)await showMasteryRewardGuide(player);
+  if(response.selection===4)await showWeaponGuide(player);
+  if(response.selection===5)await showMasteryRewardGuide(player);
+}
+
+async function showWeaponGuide(player:Player):Promise<void>{
+  const form=new ActionFormData().title("§cKho vũ khí đặc biệt").body("§7Mỗi vũ khí có model 3D, nhịp đánh, nội tại và kỹ năng chủ động riêng. Cúi + vung vũ khí để kích hoạt kỹ năng chủ động. Vũ khí Legendary loot không được Merchant bán.");
+  for(const weapon of SPECIAL_WEAPONS)form.button(`${weapon.rarityColor}${weapon.name}\n§8[${weapon.rarity}] §7${weapon.source}`,weapon.icon);
+  const result=await form.show(player);if(result.canceled||result.selection===undefined)return;const weapon=SPECIAL_WEAPONS[result.selection];
+  await new ActionFormData().title(`${weapon.rarityColor}${weapon.name}`).body(`§fPhân hạng: ${weapon.rarityColor}${weapon.rarity}\n§fLoại: §7${weapon.weaponClass}\n§fNguồn nhận: §d${weapon.source}\n§fThông số: §7${weapon.combatInfo}\n\n§d✦ NỘI TẠI — ${weapon.ability}\n§fKích hoạt: §7${weapon.trigger}\n§7${weapon.description}\n\n§6◆ CHỦ ĐỘNG — ${weapon.activeSkill}\n§fKích hoạt: §7${weapon.activeTrigger}\n§7${weapon.activeDescription}`).button("§aĐóng").show(player);
 }
 
 async function showMasteryRewardGuide(player:Player):Promise<void>{

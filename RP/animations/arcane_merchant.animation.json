@@ -1,0 +1,20 @@
+{
+  "format_version": "1.10.0",
+  "animations": {
+    "animation.mcpp.arcane_merchant.idle": {
+      "loop": true,
+      "bones": {
+        "arcane_amulet": {
+          "position": [0.0, "math.sin(q.life_time * 110.0) * 0.12", 0.0],
+          "rotation": ["math.sin(q.life_time * 75.0) * 2.0", 0.0, "math.sin(q.life_time * 55.0) * 1.5"]
+        },
+        "arcane_shoulders": {
+          "rotation": [0.0, 0.0, "math.sin(q.life_time * 48.0) * 1.25"]
+        },
+        "arcane_pack": {
+          "position": [0.0, "math.sin(q.life_time * 48.0) * 0.08", 0.0]
+        }
+      }
+    }
+  }
+}

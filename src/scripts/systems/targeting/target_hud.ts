@@ -5,6 +5,7 @@ import { toDisplay } from "../health/health_scaler";
 import { log } from "../../core/utils/logger";
 import { ARCANE_COIN_ID, CurrencyService } from "../currency/currency_service";
 import { CurrencyRegistry } from "../../core/registry/registries";
+import { getHudNotification, pruneHudNotifications } from "./hud_notification_service";
 
 const RESEND_TICKS = 40;
 const cache = new Map<string, { key: string; lastSentTick: number }>();
@@ -38,9 +39,12 @@ export function renderTargetHud(viewer: Player, target: Entity | undefined): voi
   const entry = cache.get(viewer.id);
 
   const parts: unknown[] = [];
+  const notification=getHudNotification(viewer);
+  if(notification)parts.push({text:notification.text});
   if (target) {
     const hp = readHp(target);
     if (hp) {
+      if(parts.length>0)parts.push({text:` ${GRAY}| `});
       const d = toDisplay(hp, cfg.rounding);
       const frac = hp.maxVanilla > 0 ? hp.currentVanilla / hp.maxVanilla : 0;
       if (cfg.showMobName) {
@@ -79,6 +83,7 @@ function trySend(viewer: Player, payload: unknown): void {
 }
 
 export function pruneHudCache(activePlayerIds: Set<string>): void {
+  pruneHudNotifications(activePlayerIds);
   for (const id of [...cache.keys()]) {
     if (!activePlayerIds.has(id)) {
       cache.delete(id);

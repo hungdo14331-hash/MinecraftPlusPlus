@@ -5,13 +5,17 @@
       "identifier": "mcpp:arcane_merchant",
       "materials": { "default": "witch" },
       "textures": { "default": "textures/entity/arcane_merchant" },
-      "geometry": { "default": "geometry.villager.witch.v1.8" },
-      "scripts": { "scale": "0.9375" },
+      "geometry": { "default": "geometry.mcpp.arcane_merchant" },
+      "scripts": {
+        "scale": "0.9375",
+        "animate": ["arcane_idle"]
+      },
       "animations": {
         "villager_general": "animation.villager.general",
         "look_at_target": "animation.common.look_at_target",
         "general": "animation.witch.general",
-        "move": "animation.villager.move"
+        "move": "animation.villager.move",
+        "arcane_idle": "animation.mcpp.arcane_merchant.idle"
       },
       "animation_controllers": [
         { "general": "controller.animation.witch.general" },

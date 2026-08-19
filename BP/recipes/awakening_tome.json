@@ -1,0 +1,17 @@
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_shaped": {
+    "description": { "identifier": "mcpp:awakening_tome_recipe" },
+    "tags": ["crafting_table"],
+    "unlock": { "context": "AlwaysUnlocked" },
+    "pattern": ["AEA", "LBL", "ADA"],
+    "key": {
+      "A": { "item": "minecraft:amethyst_shard" },
+      "E": { "item": "minecraft:echo_shard" },
+      "L": { "item": "minecraft:lapis_lazuli" },
+      "B": { "item": "minecraft:book" },
+      "D": { "item": "minecraft:diamond" }
+    },
+    "result": { "item": "mcpp:awakening_tome", "count": 1 }
+  }
+}

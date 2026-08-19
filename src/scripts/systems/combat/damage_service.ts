@@ -1,4 +1,4 @@
-import { Player } from "@minecraft/server";
+import { Player, type Entity, type ItemStack } from "@minecraft/server";
 import { EventBus } from "../../core/events/event_bus";
 import { Events } from "../../core/events/event_names";
 import { log } from "../../core/utils/logger";
@@ -21,8 +21,32 @@ import { masteryBonus } from "../mastery/mastery_modifiers";
 import { hasActiveMasteryReward } from "../mastery/mastery_reward_service";
 import { isSwordItem } from "../../core/utils/item_types";
 import { consumeFastHit } from "./fast_hit_guard";
+import { consumeSweepHit, INTERCEPTED_WEAPONS } from "./swing_pass";
+import { pushHudNotification } from "../targeting/hud_notification_service";
+import type { WeaponDefinition } from "../../core/types";
 
 const SCOPE_CAUSES = new Set(["entityAttack", "projectile"]);
+
+/**
+ * Nhip danh bat buoc (tick) cua mot don — dung chung boi pipeline nay va
+ * SwingStrikeService (kiem tra cong 1 lan tai thoi diem strike cua cu vung).
+ */
+export function computeRequiredTicks(
+  attacker: Entity,
+  weapon: ItemStack | undefined,
+  weaponDef: WeaponDefinition | undefined
+): number | undefined {
+  const isSword = isSwordItem(weapon);
+  let baseRequiredTicks = isSword
+    ? weaponDef?.stats.attackSpeed ?? CombatConstants.BASELINE_ATTACK_SPEED_TICKS
+    : weaponDef?.stats.attackSpeed;
+  if(weapon?.typeId==="mcpp:chronoblade"&&!hasActiveMasteryReward(attacker as Player,"dexterity"))baseRequiredTicks=20;
+  const slothLevel = isSword ? getCustomEnchantLevel(weapon, "mcpp:sloth") : 0;
+  const dexterityBonus = attacker instanceof Player ? masteryBonus(attacker, "dexterity") : 0;
+  return baseRequiredTicks === undefined
+    ? undefined
+    : applySlothToRequiredTicks(baseRequiredTicks, slothLevel, dexterityBonus);
+}
 
 export function initDamageService(): void {
   EventBus.on(Events.Combat.HurtBefore, (ev) => {
@@ -48,22 +72,36 @@ function handleHurtBefore(ev: any): void {
   const weapon = attacker instanceof Player ? readMainhand(attacker) : undefined;
   const weaponDef = resolveWeaponDefinition(weapon);
 
+  // VU KHI DAC BIET: don melee vanilla giang NGAY LUC CLICK — som hon khoanh khac
+  // luoi vu khi thuc su quet toi trong animation. Voi 10 vu khi mcpp, don tuc thoi
+  // nay bi chan hoan toan; SwingStrikeService se tu giang don theo dung nhip
+  // animation (co tre + vung quet truoc mat) va cap sweep pass cho don do.
+  const sweepHit =
+    weapon && INTERCEPTED_WEAPONS.has(weapon.typeId) ? consumeSweepHit(attacker, target) : false;
+  if (
+    weapon &&
+    INTERCEPTED_WEAPONS.has(weapon.typeId) &&
+    !sweepHit &&
+    ev.damageSource.cause === "entityAttack"
+  ) {
+    ev.damage = 0;
+    try {
+      (ev as any).cancel = true;
+    } catch {
+      // ev.damage = 0 da du de target khong mat mau.
+    }
+    return;
+  }
+
   // CONG CUNG (hard gate) — thay the hoan toan co che thuong/phat theo ty le cu.
   // Du click nhanh den dau, chi 1 don duoc tinh la "that" moi weaponDef.stats.attackSpeed
   // tick. Don toi qua som bi CHAN HOAN TOAN: khong damage, khong bonus, khong hieu ung,
   // khong knockback — dung y nguoi dung yeu cau ("chi nhan 1 don moi ~0.75s hoac tam do").
+  // Don sweep da qua cong tai thoi diem strike (SwingStrikeService) — khong kiem tra lai
+  // de tranh danh dau tick 2 lan.
   const isSword = isSwordItem(weapon);
-  let baseRequiredTicks = isSword
-    ? weaponDef?.stats.attackSpeed ?? CombatConstants.BASELINE_ATTACK_SPEED_TICKS
-    : weaponDef?.stats.attackSpeed;
-  if(weapon?.typeId==="mcpp:chronoblade"&&!hasActiveMasteryReward(attacker as Player,"dexterity"))baseRequiredTicks=20;
-  const slothLevel = isSword ? getCustomEnchantLevel(weapon, "mcpp:sloth") : 0;
-  const dexterityBonus = attacker instanceof Player ? masteryBonus(attacker, "dexterity") : 0;
-  const requiredTicks =
-    baseRequiredTicks === undefined
-      ? undefined
-      : applySlothToRequiredTicks(baseRequiredTicks, slothLevel, dexterityBonus);
-  const speedGate = resolveAttackSpeed(attacker, requiredTicks);
+  const requiredTicks = computeRequiredTicks(attacker, weapon, weaponDef);
+  const speedGate = sweepHit ? { allowed: true } : resolveAttackSpeed(attacker, requiredTicks);
   if (!speedGate.allowed) {
     ev.damage = 0;
     try {
@@ -88,7 +126,7 @@ function handleHurtBefore(ev: any): void {
   ctx.critical = critRes.critical;
   ctx.criticalMultiplier = critRes.multiplier;
   if(critRes.critical&&attacker instanceof Player&&hasActiveMasteryReward(attacker,"precision")){
-    attacker.onScreenDisplay.setActionBar("§b◉ Mắt Thần Thợ Săn — Chí mạng!");
+    pushHudNotification(attacker,"§b◉ Mắt Thần Thợ Săn — Chí mạng!",30,2);
   }
 
   const critBonusRaw = observedDamageMcpp * (critRes.multiplier - 1);

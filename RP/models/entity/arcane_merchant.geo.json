@@ -1,0 +1,34 @@
+{
+  "format_version": "1.8.0",
+  "geometry.mcpp.arcane_merchant:geometry.villager.witch.v1.8": {
+    "visible_bounds_width": 1.8,
+    "visible_bounds_height": 3.1,
+    "visible_bounds_offset": [0, 1.55, 0],
+    "texturewidth": 64,
+    "textureheight": 128,
+    "bones": [
+      {
+        "name": "arcane_amulet",
+        "parent": "body",
+        "cubes": [
+          { "origin": [-1.25, 18.5, -3.85], "size": [2.5, 3, 1], "uv": [0, 64], "inflate": 0.05 }
+        ]
+      },
+      {
+        "name": "arcane_shoulders",
+        "parent": "body",
+        "cubes": [
+          { "origin": [-6.0, 20.0, -2.0], "size": [2, 4, 4], "uv": [32, 0], "rotation": [0, 0, -12], "pivot": [-4, 21, 0] },
+          { "origin": [4.0, 20.0, -2.0], "size": [2, 4, 4], "uv": [32, 0], "rotation": [0, 0, 12], "pivot": [4, 21, 0], "mirror": true }
+        ]
+      },
+      {
+        "name": "arcane_pack",
+        "parent": "body",
+        "cubes": [
+          { "origin": [-3.5, 12.5, 2.6], "size": [7, 9, 3], "uv": [16, 100], "inflate": 0.1 }
+        ]
+      }
+    ]
+  }
+}

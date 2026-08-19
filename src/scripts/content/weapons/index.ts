@@ -51,7 +51,7 @@ export function register(): void {
       criticalChance: 0,
       knockback: 0.35,
     },
-    abilities: ["mcpp:conqueror_cleave"],
+    abilities: ["mcpp:conqueror_cleave", "mcpp:king_slash"],
   });
 
   WeaponRegistry.register({
@@ -64,9 +64,16 @@ export function register(): void {
       criticalChance: 0.05,
       knockback: 0,
     },
+    abilities: ["mcpp:time_acceleration", "mcpp:time_domain"],
   });
 
-  WeaponRegistry.register({id:"mcpp:arcane_spear",itemTypeId:"mcpp:arcane_spear",stats:{attackDamageMcpp:9*HEALTH_SCALE,attackSpeed:15,armorPenetration:0.2,criticalChance:0.05,knockback:0.3}});
-  WeaponRegistry.register({id:"mcpp:frost_hammer",itemTypeId:"mcpp:frost_hammer",stats:{attackDamageMcpp:11*HEALTH_SCALE,attackSpeed:22,armorPenetration:0.05,criticalChance:0,knockback:1}});
-  WeaponRegistry.register({id:"mcpp:shadow_dagger",itemTypeId:"mcpp:shadow_dagger",stats:{attackDamageMcpp:6*HEALTH_SCALE,attackSpeed:7,armorPenetration:0.1,criticalChance:0.15,knockback:0}});
+  WeaponRegistry.register({id:"mcpp:arcane_spear",itemTypeId:"mcpp:arcane_spear",stats:{attackDamageMcpp:9*HEALTH_SCALE,attackSpeed:15,armorPenetration:0.2,criticalChance:0.05,knockback:0.3},abilities:["mcpp:arcane_impale","mcpp:stellar_pierce"]});
+  WeaponRegistry.register({id:"mcpp:frost_hammer",itemTypeId:"mcpp:frost_hammer",stats:{attackDamageMcpp:11*HEALTH_SCALE,attackSpeed:22,armorPenetration:0.05,criticalChance:0,knockback:1},abilities:["mcpp:permafrost_slam","mcpp:eternal_frost_slam"]});
+  WeaponRegistry.register({id:"mcpp:shadow_dagger",itemTypeId:"mcpp:shadow_dagger",stats:{attackDamageMcpp:6*HEALTH_SCALE,attackSpeed:7,armorPenetration:0.1,criticalChance:0.15,knockback:0},abilities:["mcpp:shadowstep","mcpp:shadow_strike"]});
+
+  WeaponRegistry.register({id:"mcpp:runeblade",itemTypeId:"mcpp:runeblade",stats:{attackDamageMcpp:9*HEALTH_SCALE,attackSpeed:13,armorPenetration:0.1,criticalChance:0.05,knockback:0.2},abilities:["mcpp:rune_echo","mcpp:rune_detonation"]});
+  WeaponRegistry.register({id:"mcpp:titan_maul",itemTypeId:"mcpp:titan_maul",stats:{attackDamageMcpp:13*HEALTH_SCALE,attackSpeed:26,armorPenetration:0.15,criticalChance:0,knockback:1.2},abilities:["mcpp:seismic_impact","mcpp:titan_fall"]});
+  WeaponRegistry.register({id:"mcpp:gale_glaive",itemTypeId:"mcpp:gale_glaive",stats:{attackDamageMcpp:8*HEALTH_SCALE,attackSpeed:11,armorPenetration:0.12,criticalChance:0.08,knockback:0.45},abilities:["mcpp:windstep","mcpp:gale_dance"]});
+  WeaponRegistry.register({id:"mcpp:ember_cleaver",itemTypeId:"mcpp:ember_cleaver",stats:{attackDamageMcpp:12*HEALTH_SCALE,attackSpeed:19,armorPenetration:0.18,criticalChance:0.05,knockback:0.6},abilities:["mcpp:hellfire","mcpp:flame_cleave"]});
+  WeaponRegistry.register({id:"mcpp:void_reaper",itemTypeId:"mcpp:void_reaper",stats:{attackDamageMcpp:10*HEALTH_SCALE,attackSpeed:15,armorPenetration:0.25,criticalChance:0.12,criticalDamage:2,knockback:0.15},abilities:["mcpp:soul_harvest","mcpp:soul_eclipse"]});
 }

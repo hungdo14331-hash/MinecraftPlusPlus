@@ -1,0 +1,66 @@
+{
+  "format_version": "1.10.0",
+  "animations": {
+    "animation.player.first_person.attack_rotation": {
+      "loop": true,
+      "bones": {
+        "rightarm": {
+          "position": [
+            "(q.get_equipped_item_name == 'conqueror_greatsword' || q.get_equipped_item_name == 'chronoblade' || q.get_equipped_item_name == 'arcane_spear' || q.get_equipped_item_name == 'frost_hammer' || q.get_equipped_item_name == 'shadow_dagger' || q.get_equipped_item_name == 'runeblade' || q.get_equipped_item_name == 'titan_maul' || q.get_equipped_item_name == 'gale_glaive' || q.get_equipped_item_name == 'ember_cleaver' || q.get_equipped_item_name == 'void_reaper') ? 0.0 : (math.clamp(-15.5 * math.sin(variable.first_person_item_rotation_factor * variable.attack_time * 112.0), -7.0, 999.0) * math.sin(variable.first_person_item_rotation_factor * variable.attack_time * 112.0))",
+            "(q.get_equipped_item_name == 'conqueror_greatsword' || q.get_equipped_item_name == 'chronoblade' || q.get_equipped_item_name == 'arcane_spear' || q.get_equipped_item_name == 'frost_hammer' || q.get_equipped_item_name == 'shadow_dagger' || q.get_equipped_item_name == 'runeblade' || q.get_equipped_item_name == 'titan_maul' || q.get_equipped_item_name == 'gale_glaive' || q.get_equipped_item_name == 'ember_cleaver' || q.get_equipped_item_name == 'void_reaper') ? 0.0 : (math.sin(variable.first_person_item_rotation_factor * (1.0 - variable.attack_time) * (1.0 - variable.attack_time) * 200.0) * 7.5 - variable.first_person_item_rotation_factor * variable.attack_time * 15.0 + variable.short_arm_offset_right)",
+            "(q.get_equipped_item_name == 'conqueror_greatsword' || q.get_equipped_item_name == 'chronoblade' || q.get_equipped_item_name == 'arcane_spear' || q.get_equipped_item_name == 'frost_hammer' || q.get_equipped_item_name == 'shadow_dagger' || q.get_equipped_item_name == 'runeblade' || q.get_equipped_item_name == 'titan_maul' || q.get_equipped_item_name == 'gale_glaive' || q.get_equipped_item_name == 'ember_cleaver' || q.get_equipped_item_name == 'void_reaper') ? 0.0 : (math.sin(variable.first_person_item_rotation_factor * variable.attack_time * 120.0) * 1.75)"
+          ],
+          "rotation": [
+            "(q.get_equipped_item_name == 'conqueror_greatsword' || q.get_equipped_item_name == 'chronoblade' || q.get_equipped_item_name == 'arcane_spear' || q.get_equipped_item_name == 'frost_hammer' || q.get_equipped_item_name == 'shadow_dagger' || q.get_equipped_item_name == 'runeblade' || q.get_equipped_item_name == 'titan_maul' || q.get_equipped_item_name == 'gale_glaive' || q.get_equipped_item_name == 'ember_cleaver' || q.get_equipped_item_name == 'void_reaper') ? 0.0 : (math.sin(variable.first_person_item_rotation_factor * (1.0 - variable.attack_time) * (1.0 - variable.attack_time) * 280.0) * -60.0)",
+            "(q.get_equipped_item_name == 'conqueror_greatsword' || q.get_equipped_item_name == 'chronoblade' || q.get_equipped_item_name == 'arcane_spear' || q.get_equipped_item_name == 'frost_hammer' || q.get_equipped_item_name == 'shadow_dagger' || q.get_equipped_item_name == 'runeblade' || q.get_equipped_item_name == 'titan_maul' || q.get_equipped_item_name == 'gale_glaive' || q.get_equipped_item_name == 'ember_cleaver' || q.get_equipped_item_name == 'void_reaper') ? 0.0 : (math.sin(variable.first_person_item_rotation_factor * (1.0 - variable.attack_time) * (1.0 - variable.attack_time) * 280.0) * 40.0)",
+            "(q.get_equipped_item_name == 'conqueror_greatsword' || q.get_equipped_item_name == 'chronoblade' || q.get_equipped_item_name == 'arcane_spear' || q.get_equipped_item_name == 'frost_hammer' || q.get_equipped_item_name == 'shadow_dagger' || q.get_equipped_item_name == 'runeblade' || q.get_equipped_item_name == 'titan_maul' || q.get_equipped_item_name == 'gale_glaive' || q.get_equipped_item_name == 'ember_cleaver' || q.get_equipped_item_name == 'void_reaper') ? 0.0 : (math.sin(variable.first_person_item_rotation_factor * (1.0 - variable.attack_time) * (1.0 - variable.attack_time) * 280.0) * 20.0)"
+          ]
+        }
+      }
+    },
+    "animation.player.first_person.attack_rotation_item": {
+      "loop": true,
+      "override_previous_animation": true,
+      "bones": {
+        "rightitem": {
+          "position": [
+            "(q.get_equipped_item_name == 'conqueror_greatsword' || q.get_equipped_item_name == 'chronoblade' || q.get_equipped_item_name == 'arcane_spear' || q.get_equipped_item_name == 'frost_hammer' || q.get_equipped_item_name == 'shadow_dagger' || q.get_equipped_item_name == 'runeblade' || q.get_equipped_item_name == 'titan_maul' || q.get_equipped_item_name == 'gale_glaive' || q.get_equipped_item_name == 'ember_cleaver' || q.get_equipped_item_name == 'void_reaper') ? 0.0 : (-math.sin(math.sqrt(variable.attack_time) * Math.Pi * 100) * 10)",
+            "(q.get_equipped_item_name == 'conqueror_greatsword' || q.get_equipped_item_name == 'chronoblade' || q.get_equipped_item_name == 'arcane_spear' || q.get_equipped_item_name == 'frost_hammer' || q.get_equipped_item_name == 'shadow_dagger' || q.get_equipped_item_name == 'runeblade' || q.get_equipped_item_name == 'titan_maul' || q.get_equipped_item_name == 'gale_glaive' || q.get_equipped_item_name == 'ember_cleaver' || q.get_equipped_item_name == 'void_reaper') ? 0.0 : (math.sin(math.sqrt(variable.attack_time) * Math.Pi * 2 * 60) * 10)",
+            "(q.get_equipped_item_name == 'conqueror_greatsword' || q.get_equipped_item_name == 'chronoblade' || q.get_equipped_item_name == 'arcane_spear' || q.get_equipped_item_name == 'frost_hammer' || q.get_equipped_item_name == 'shadow_dagger' || q.get_equipped_item_name == 'runeblade' || q.get_equipped_item_name == 'titan_maul' || q.get_equipped_item_name == 'gale_glaive' || q.get_equipped_item_name == 'ember_cleaver' || q.get_equipped_item_name == 'void_reaper') ? 0.0 : (-math.sin(variable.attack_time * Math.Pi * 65) * 2)"
+          ],
+          "rotation": [
+            "(q.get_equipped_item_name == 'conqueror_greatsword' || q.get_equipped_item_name == 'chronoblade' || q.get_equipped_item_name == 'arcane_spear' || q.get_equipped_item_name == 'frost_hammer' || q.get_equipped_item_name == 'shadow_dagger' || q.get_equipped_item_name == 'runeblade' || q.get_equipped_item_name == 'titan_maul' || q.get_equipped_item_name == 'gale_glaive' || q.get_equipped_item_name == 'ember_cleaver' || q.get_equipped_item_name == 'void_reaper') ? 0.0 : (-math.sin(math.sqrt(variable.attack_time) * Math.Pi * 20) * 25)",
+            "(q.get_equipped_item_name == 'conqueror_greatsword' || q.get_equipped_item_name == 'chronoblade' || q.get_equipped_item_name == 'arcane_spear' || q.get_equipped_item_name == 'frost_hammer' || q.get_equipped_item_name == 'shadow_dagger' || q.get_equipped_item_name == 'runeblade' || q.get_equipped_item_name == 'titan_maul' || q.get_equipped_item_name == 'gale_glaive' || q.get_equipped_item_name == 'ember_cleaver' || q.get_equipped_item_name == 'void_reaper') ? 0.0 : (-math.sin(math.sqrt(variable.attack_time) * 75.0) * 15.0)",
+            "(q.get_equipped_item_name == 'conqueror_greatsword' || q.get_equipped_item_name == 'chronoblade' || q.get_equipped_item_name == 'arcane_spear' || q.get_equipped_item_name == 'frost_hammer' || q.get_equipped_item_name == 'shadow_dagger' || q.get_equipped_item_name == 'runeblade' || q.get_equipped_item_name == 'titan_maul' || q.get_equipped_item_name == 'gale_glaive' || q.get_equipped_item_name == 'ember_cleaver' || q.get_equipped_item_name == 'void_reaper') ? 0.0 : (-math.sin(math.sqrt(variable.attack_time) * 25) * 15)"
+          ]
+        }
+      }
+    },
+    "animation.player.attack.rotations": {
+      "loop": true,
+      "bones": {
+        "body": {
+          "rotation": [
+            0.0,
+            "(q.get_equipped_item_name == 'conqueror_greatsword' || q.get_equipped_item_name == 'chronoblade' || q.get_equipped_item_name == 'arcane_spear' || q.get_equipped_item_name == 'frost_hammer' || q.get_equipped_item_name == 'shadow_dagger' || q.get_equipped_item_name == 'runeblade' || q.get_equipped_item_name == 'titan_maul' || q.get_equipped_item_name == 'gale_glaive' || q.get_equipped_item_name == 'ember_cleaver' || q.get_equipped_item_name == 'void_reaper') ? 0.0 : (variable.attack_body_rot_y)",
+            0.0
+          ]
+        },
+        "leftarm": {
+          "rotation": [
+            "(q.get_equipped_item_name == 'conqueror_greatsword' || q.get_equipped_item_name == 'chronoblade' || q.get_equipped_item_name == 'arcane_spear' || q.get_equipped_item_name == 'frost_hammer' || q.get_equipped_item_name == 'shadow_dagger' || q.get_equipped_item_name == 'runeblade' || q.get_equipped_item_name == 'titan_maul' || q.get_equipped_item_name == 'gale_glaive' || q.get_equipped_item_name == 'ember_cleaver' || q.get_equipped_item_name == 'void_reaper') ? 0.0 : (-(math.sin((1 - math.pow((1 - variable.attack_time), 4)) * 180) * 1.2 + math.sin(variable.attack_time * 180)) * 10.0)",
+            0.0,
+            0.0
+          ]
+        },
+        "rightarm": {
+          "rotation": [
+            "(q.get_equipped_item_name == 'conqueror_greatsword' || q.get_equipped_item_name == 'chronoblade' || q.get_equipped_item_name == 'arcane_spear' || q.get_equipped_item_name == 'frost_hammer' || q.get_equipped_item_name == 'shadow_dagger' || q.get_equipped_item_name == 'runeblade' || q.get_equipped_item_name == 'titan_maul' || q.get_equipped_item_name == 'gale_glaive' || q.get_equipped_item_name == 'ember_cleaver' || q.get_equipped_item_name == 'void_reaper') ? 0.0 : (-(math.sin((1 - math.pow((1 - variable.attack_time), 4)) * 180) * 1.2 + math.sin(variable.attack_time * 180)) * 30.0)",
+            "(q.get_equipped_item_name == 'conqueror_greatsword' || q.get_equipped_item_name == 'chronoblade' || q.get_equipped_item_name == 'arcane_spear' || q.get_equipped_item_name == 'frost_hammer' || q.get_equipped_item_name == 'shadow_dagger' || q.get_equipped_item_name == 'runeblade' || q.get_equipped_item_name == 'titan_maul' || q.get_equipped_item_name == 'gale_glaive' || q.get_equipped_item_name == 'ember_cleaver' || q.get_equipped_item_name == 'void_reaper') ? 0.0 : (-(math.sin((1 - math.pow((1 - variable.attack_time), 4)) * 180) ? (-90.0 * math.sin((1 - math.pow((1 - variable.attack_time), 4)) * 180)) + 30.0 : 0.0))",
+            0.0
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "format_version": "1.20.50",
+  "minecraft:item": {
+    "description": {"identifier": "mcpp:runeblade", "menu_category": {"category": "equipment"}},
+    "components": {
+      "minecraft:display_name": {"value": "§r§bKiếm Cổ Ngữ"},
+      "minecraft:icon": {"texture": "mcpp_runeblade"},
+      "minecraft:glint": true,
+      "minecraft:max_stack_size": 1,
+      "minecraft:damage": 9,
+      "minecraft:durability": {"max_durability": 1800},
+      "minecraft:hand_equipped": true
+    }
+  }
+}

@@ -7,6 +7,7 @@ import { AntiHealService } from "../combat/anti_heal_service";
 import { EventBus } from "../../core/events/event_bus";
 import { Events } from "../../core/events/event_names";
 import { system } from "@minecraft/server";
+import { pushHudNotification } from "../targeting/hud_notification_service";
 
 export function hasItem(player:Player,itemId:string):boolean{
   const container=player.getComponent(EntityComponentTypes.Inventory)?.container;if(!container)return false;
@@ -24,7 +25,7 @@ export function initMasteryRewardService():void{
   EventBus.on(Events.Lifecycle.PlayerSpawn,(ev:any)=>system.run(()=>refreshRewardLore(ev.player)));
   TickScheduler.every("mastery_life_relic",20,()=>{
     for(const player of getAllPlayers())if(hasActiveMasteryReward(player,"recovery")&&AntiHealService.clear(player)){
-      player.onScreenDisplay.setActionBar("§a✦ Thánh Vật Sinh Mệnh đã thanh tẩy Suy Tàn");
+      pushHudNotification(player,"§a✦ Thánh Vật Sinh Mệnh đã thanh tẩy Suy Tàn",45,3);
     }
   });
 }

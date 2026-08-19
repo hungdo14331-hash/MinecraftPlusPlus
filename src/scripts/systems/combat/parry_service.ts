@@ -26,9 +26,22 @@ interface ParryState {
 
 const states = new Map<string, ParryState>();
 const parriedHits = new Map<string, number>();
+const parrySuppressedUntil = new Map<string, number>();
 
 export function wasHitParried(attacker: Entity, target: Entity): boolean {
   return system.currentTick <= (parriedHits.get(`${attacker.id}:${target.id}`) ?? -1);
+}
+
+/** Kỹ năng chủ động dùng chung thao tác cúi; khi đã kích hoạt, kỹ năng được ưu tiên hơn Parry. */
+export function cancelParryWindow(player: Player): void {
+  const now = system.currentTick;
+  parrySuppressedUntil.set(player.id, now + 2);
+  const state = states.get(player.id);
+  if (state) {
+    // Nếu cửa sổ vừa mở chỉ vì người chơi cúi để dùng kỹ năng, hoàn lại Parry.
+    if (state.windowUntil >= now) state.cooldownUntil = now;
+    state.windowUntil = -1;
+  }
 }
 
 export function initParryService(): void {
@@ -48,7 +61,12 @@ function pollParryInput(): void {
       level: 0,
     };
     const sneaking = player.isSneaking;
-    if (sneaking && !state.wasSneaking && now >= state.cooldownUntil) {
+    if (
+      sneaking
+      && !state.wasSneaking
+      && now >= state.cooldownUntil
+      && now > (parrySuppressedUntil.get(player.id) ?? -1)
+    ) {
       const weapon = readMainhand(player);
       const rawLevel = isSwordItem(weapon)
         ? getCustomEnchantLevel(weapon, "mcpp:parry")
@@ -134,4 +152,5 @@ function pruneStates(): void {
   for (const id of states.keys()) if (!active.has(id)) states.delete(id);
   const now = system.currentTick;
   for (const [key, until] of parriedHits) if (now > until) parriedHits.delete(key);
+  for (const [id, until] of parrySuppressedUntil) if (now > until || !active.has(id)) parrySuppressedUntil.delete(id);
 }

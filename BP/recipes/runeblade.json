@@ -1,0 +1,16 @@
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_shaped": {
+    "description": {"identifier": "mcpp:runeblade_recipe"},
+    "tags": ["crafting_table"],
+    "unlock": {"context": "AlwaysUnlocked"},
+    "pattern": ["AEA", "ADA", " O "],
+    "key": {
+      "A": {"item": "minecraft:amethyst_shard"},
+      "E": {"item": "minecraft:echo_shard"},
+      "D": {"item": "minecraft:diamond_sword"},
+      "O": {"item": "minecraft:obsidian"}
+    },
+    "result": {"item": "mcpp:runeblade", "count": 1}
+  }
+}

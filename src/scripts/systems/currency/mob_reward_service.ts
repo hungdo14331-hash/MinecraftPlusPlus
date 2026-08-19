@@ -9,6 +9,7 @@ import { CurrencyService } from "./currency_service";
 import { masteryBonus } from "../mastery/mastery_modifiers";
 import { hasActiveMasteryReward } from "../mastery/mastery_reward_service";
 import { isSwordItem } from "../../core/utils/item_types";
+import { pushHudNotification } from "../targeting/hud_notification_service";
 
 const BOUNTY_BONUS: Record<number, { chance: number; flat: number }> = {
   1: { chance: 0.2, flat: 3 },
@@ -56,7 +57,7 @@ function rewardKill(ev: any): void {
   CurrencyService.add(killer, coins, undefined, `kill:${dead.typeId}`);
   const royal=hasActiveMasteryReward(killer,"prosperity");
   const suffix = `${bountyBonus > 0 ? ` §6(Bounty +${bountyBonus})` : ""}${royal?" §6[ Bùa Vương Giả ]":""}`;
-  killer.onScreenDisplay.setActionBar(`§d✦ +${coins}${suffix}`);
+  pushHudNotification(killer,`§d✦ +${coins}${suffix}`,30,1);
 }
 
 function randomInt(min: number, max: number): number {

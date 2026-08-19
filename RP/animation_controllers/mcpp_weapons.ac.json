@@ -1,0 +1,38 @@
+{
+  "format_version": "1.10.0",
+  "animation_controllers": {
+    "controller.animation.mcpp.weapon_attack": {
+      "initial_state": "idle",
+      "states": {
+        "idle": {
+          "transitions": [
+            {
+              "attack_fp": "context.is_first_person == 1.0 && context.owning_entity->variable.attack_time > 0.001"
+            },
+            {
+              "attack_tp": "context.is_first_person == 0.0 && context.owning_entity->variable.attack_time > 0.001"
+            }
+          ]
+        },
+        "attack_fp": {
+          "animations": ["attack_fp"],
+          "blend_transition": 0.08,
+          "transitions": [
+            {
+              "idle": "query.all_animations_finished"
+            }
+          ]
+        },
+        "attack_tp": {
+          "animations": ["attack_tp"],
+          "blend_transition": 0.08,
+          "transitions": [
+            {
+              "idle": "query.all_animations_finished"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

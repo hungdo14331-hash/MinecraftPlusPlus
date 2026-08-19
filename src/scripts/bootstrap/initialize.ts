@@ -12,6 +12,12 @@ import { initDamageService } from "../systems/combat/damage_service";
 import { initHealingService } from "../systems/health/healing_service";
 import { initVeinMinerService } from "../systems/mining/vein_miner_service";
 import { initEarthshatterService } from "../systems/mining/earthshatter_service";
+import { initSpecialWeaponService } from "../systems/weapons/special_weapon_service";
+import { initActiveWeaponSkillService } from "../systems/weapons/active_weapon_skill_service";
+import { initWeaponIdentityService } from "../systems/weapons/weapon_identity_service";
+import { initWeaponAnimationService } from "../systems/weapons/weapon_animation_service";
+import { initSwingStrikeService } from "../systems/weapons/swing_strike_service";
+import { initSwordSweepService } from "../systems/combat/sword_sweep_service";
 import { initLegendaryWeaponService } from "../systems/mastery/legendary_weapon_service";
 import { initMasteryRewardService } from "../systems/mastery/mastery_reward_service";
 import { initFastWeaponService } from "../systems/combat/fast_weapon_service";
@@ -47,7 +53,10 @@ export function initialize(): void {
   subscribeEvents();
   initTargetHudSystem();
   initDamageService();
-  initFastWeaponService();
+  // TAT fast weapon: don tuc thoi luc click cua Chronoblade/Shadow Dagger da duoc
+  // SwingStrikeService thay the (nhip nhanh + cuong hoa Thoi Gioi giu nguyen o do).
+  // Khoi phuc hanh vi cu: bo comment dong duoi va go initSwingStrikeService().
+  // initFastWeaponService();
   initHealingService();
   initLifeStealService();
   initTrueDamageService();
@@ -58,6 +67,12 @@ export function initialize(): void {
   initMasteryModifiers();
   initMasteryDefenseService();
   initLegendaryWeaponService();
+  initSpecialWeaponService();
+  initActiveWeaponSkillService();
+  initWeaponIdentityService();
+  initWeaponAnimationService();
+  initSwingStrikeService();
+  initSwordSweepService();
   initMasteryRewardService();
   initMomentumService();
   initEnchantCommandService();

@@ -7,8 +7,8 @@
         "texture_width": 64,
         "texture_height": 64,
         "visible_bounds_width": 2,
-        "visible_bounds_height": 2,
-        "visible_bounds_offset": [0, 0.75, 0]
+        "visible_bounds_height": 2.5,
+        "visible_bounds_offset": [0, 1, 0]
       },
       "bones": [
         {
@@ -42,13 +42,33 @@
           ]
         },
         {
-          "name": "book",
-          "pivot": [0, 13, 0],
+          "name": "rune_focus",
+          "pivot": [0, 12, 0],
           "cubes": [
             {
-              "origin": [-6.25, 12.55, -4.25],
-              "size": [6.25, 0.5, 8.5],
-              "pivot": [0, 13, 0],
+              "origin": [-5.5, 12.05, -5.5],
+              "size": [11, 0.3, 11],
+              "uv": {
+                "north": { "uv": [0, 0], "uv_size": [64, 64], "material_instance": "rune" },
+                "south": { "uv": [0, 0], "uv_size": [64, 64], "material_instance": "rune" },
+                "east": { "uv": [0, 0], "uv_size": [64, 64], "material_instance": "rune" },
+                "west": { "uv": [0, 0], "uv_size": [64, 64], "material_instance": "rune" },
+                "up": { "uv": [0, 0], "uv_size": [64, 64], "material_instance": "rune" },
+                "down": { "uv": [0, 0], "uv_size": [64, 64], "material_instance": "rune" }
+              }
+            },
+            { "origin": [-6.5, 12.25, -6.5], "size": [1.5, 3, 1.5], "pivot": [-5.75, 12.25, -5.75], "rotation": [0, 0, -18], "uv": { "up": { "uv": [0, 0], "uv_size": [64, 64], "material_instance": "rune" }, "north": { "uv": [0, 0], "uv_size": [64, 64], "material_instance": "rune" }, "south": { "uv": [0, 0], "uv_size": [64, 64], "material_instance": "rune" }, "east": { "uv": [0, 0], "uv_size": [64, 64], "material_instance": "rune" }, "west": { "uv": [0, 0], "uv_size": [64, 64], "material_instance": "rune" } } },
+            { "origin": [5, 12.25, -6.5], "size": [1.5, 3, 1.5], "pivot": [5.75, 12.25, -5.75], "rotation": [0, 0, 18], "uv": { "up": { "uv": [0, 0], "uv_size": [64, 64], "material_instance": "rune" }, "north": { "uv": [0, 0], "uv_size": [64, 64], "material_instance": "rune" }, "south": { "uv": [0, 0], "uv_size": [64, 64], "material_instance": "rune" }, "east": { "uv": [0, 0], "uv_size": [64, 64], "material_instance": "rune" }, "west": { "uv": [0, 0], "uv_size": [64, 64], "material_instance": "rune" } } }
+          ]
+        },
+        {
+          "name": "book",
+          "pivot": [0, 16, 0],
+          "cubes": [
+            {
+              "origin": [-6.25, 15.55, -4.25],
+              "size": [0, 0, 0],
+              "pivot": [0, 16, 0],
               "rotation": [0, 0, -12],
               "uv": {
                 "north": { "uv": [0, 0], "uv_size": [64, 64], "material_instance": "cover" },
@@ -60,9 +80,9 @@
               }
             },
             {
-              "origin": [0, 12.55, -4.25],
-              "size": [6.25, 0.5, 8.5],
-              "pivot": [0, 13, 0],
+              "origin": [0, 15.55, -4.25],
+              "size": [0, 0, 0],
+              "pivot": [0, 16, 0],
               "rotation": [0, 0, 12],
               "uv": {
                 "north": { "uv": [0, 0], "uv_size": [64, 64], "material_instance": "cover" },
@@ -74,9 +94,9 @@
               }
             },
             {
-              "origin": [-5.75, 13, -4],
-              "size": [5.75, 0.5, 8],
-              "pivot": [0, 13, 0],
+              "origin": [-5.75, 16, -4],
+              "size": [0, 0, 0],
+              "pivot": [0, 16, 0],
               "rotation": [0, 0, -12],
               "uv": {
                 "north": { "uv": [0, 0], "uv_size": [64, 64], "material_instance": "page" },
@@ -88,9 +108,9 @@
               }
             },
             {
-              "origin": [0, 13, -4],
-              "size": [5.75, 0.5, 8],
-              "pivot": [0, 13, 0],
+              "origin": [0, 16, -4],
+              "size": [0, 0, 0],
+              "pivot": [0, 16, 0],
               "rotation": [0, 0, 12],
               "uv": {
                 "north": { "uv": [0, 0], "uv_size": [64, 64], "material_instance": "page" },

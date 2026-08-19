@@ -6,6 +6,25 @@ import { matchesItemSuffix } from "./item_types";
 const LORE_COLOR = "§r§5";
 const ROMAN = ["", "I", "II", "III", "IV", "V"] as const;
 
+function stripFormatting(value: string): string {
+  return value.replace(/§[0-9a-fk-or]/gi, "").trim();
+}
+
+function levelFromLoreLine(line: string, displayName: string, maxLevel: number): number {
+  const plain = stripFormatting(line).replace(/\s+/g, " ");
+  const prefix = `${displayName} `.toLowerCase();
+  if (!plain.toLowerCase().startsWith(prefix)) return 0;
+  const encoded = plain.slice(prefix.length).trim().toUpperCase();
+  const numeric = Number(encoded);
+  const level = Number.isInteger(numeric) ? numeric : ROMAN.indexOf(encoded as (typeof ROMAN)[number]);
+  return level >= 1 && level <= maxLevel ? level : 0;
+}
+
+function isEnchantLoreLine(line: string, displayName: string): boolean {
+  const plain = stripFormatting(line).replace(/\s+/g, " ").toLowerCase();
+  return plain.startsWith(`${displayName.toLowerCase()} `);
+}
+
 function lorePrefix(displayName: string): string {
   return `${LORE_COLOR}${displayName} `;
 }
@@ -15,9 +34,12 @@ export function getCustomEnchantLevel(item: ItemStack | undefined, enchantId: st
   const definition = EnchantRegistry.get(enchantId);
   if (!definition) return 0;
 
-  const prefix = lorePrefix(definition.displayName);
-  const line = item.getLore().find((entry) => entry.startsWith(prefix));
-  if (!line) {
+  for (const line of item.getLore()) {
+    const level = levelFromLoreLine(line, definition.displayName, definition.maxLevel);
+    if (level > 0) return level;
+  }
+
+  {
     const base = `${enchantId}_book_`;
     if (item.typeId.startsWith(base)) {
       const encoded = Number(item.typeId.slice(base.length));
@@ -25,10 +47,6 @@ export function getCustomEnchantLevel(item: ItemStack | undefined, enchantId: st
     }
     return 0;
   }
-
-  const roman = line.slice(prefix.length);
-  const level = ROMAN.indexOf(roman as (typeof ROMAN)[number]);
-  return level >= 1 && level <= definition.maxLevel ? level : 0;
 }
 
 export function isCustomEnchantBook(item: ItemStack | undefined, enchantId: string): boolean {
@@ -60,7 +78,7 @@ export function setCustomEnchantLevel(item: ItemStack, enchantId: string, level:
   }
 
   const prefix = lorePrefix(definition.displayName);
-  const lore = item.getLore().filter((entry) => !entry.startsWith(prefix));
+  const lore = item.getLore().filter((entry) => !isEnchantLoreLine(entry, definition.displayName));
   lore.push(`${prefix}${ROMAN[level]}`);
   item.setLore(lore);
 }
@@ -74,7 +92,7 @@ export function setCustomEnchantBookLevel(book: ItemStack, enchantId: string, le
   }
 
   const prefix = lorePrefix(definition.displayName);
-  const lore = book.getLore().filter((entry) => !entry.startsWith(prefix));
+  const lore = book.getLore().filter((entry) => !isEnchantLoreLine(entry, definition.displayName));
   lore.push(`${prefix}${ROMAN[level]}`);
   book.setLore(lore);
 }

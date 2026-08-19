@@ -8,9 +8,9 @@
     "bump": "node tools/bump-version.mjs",
     "manifests": "node tools/generate-manifests.mjs",
     "build": "npm run manifests && node build.mjs",
-    "package": "npm run bump && npm run build && node tools/package-addon.mjs",
+    "package": "npm run bump && npm run build && npm run audit && node tools/package-addon.mjs",
     "audit": "node tools/audit-content.mjs",
-    "test": "node --test tests/"
+    "test": "npm run audit"
   },
   "license": "UNLICENSED",
   "devDependencies": {

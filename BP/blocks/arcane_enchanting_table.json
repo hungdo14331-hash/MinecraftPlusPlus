@@ -36,6 +36,12 @@
         "cover": {
           "texture": "mcpp_vampire_book",
           "render_method": "opaque"
+        },
+        "rune": {
+          "texture": "mcpp_arcane_table_top",
+          "render_method": "opaque",
+          "face_dimming": false,
+          "ambient_occlusion": false
         }
       },
       "minecraft:collision_box": {
@@ -44,7 +50,7 @@
       },
       "minecraft:selection_box": {
         "origin": [-8, 0, -8],
-        "size": [16, 15, 16]
+        "size": [16, 16, 16]
       },
       "minecraft:destructible_by_mining": {
         "seconds_to_destroy": 5
@@ -52,7 +58,7 @@
       "minecraft:destructible_by_explosion": {
         "explosion_resistance": 1200
       },
-      "minecraft:light_emission": 4,
+      "minecraft:light_emission": 9,
       "minecraft:map_color": "#171225"
     }
   }

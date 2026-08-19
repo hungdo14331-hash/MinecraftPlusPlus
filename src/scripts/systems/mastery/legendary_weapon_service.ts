@@ -6,6 +6,8 @@ import { log } from "../../core/utils/logger";
 import { hasActiveMasteryReward } from "./mastery_reward_service";
 import { TaskQueue } from "../../core/scheduler/task_queue";
 import { clearFastHit,markFastHit } from "../combat/fast_hit_guard";
+import { pushHudNotification } from "../targeting/hud_notification_service";
+import { consumeConqueredMark } from "../weapons/active_weapon_skill_service";
 
 const WEAPON_ID="mcpp:conqueror_greatsword";
 const lastCleaveTick=new Map<string,number>();
@@ -30,9 +32,10 @@ function executeCleave(player:Player,primary:Entity):void{
   for(const target of player.dimension.getEntities({location:primary.location,maxDistance:3})){
     if(target.id===player.id||target.id===primary.id||target.typeId==="minecraft:item"||target.typeId==="minecraft:xp_orb"||target.typeId==="minecraft:player")continue;
     markFastHit(player,target);
-    try{if(target.applyDamage(4,{cause:EntityDamageCause.entityAttack,damagingEntity:player})){hitCount++;}}catch{}finally{clearFastHit(player,target);}
+    const damage=consumeConqueredMark(player,target)?4.8:4;
+    try{if(target.applyDamage(damage,{cause:EntityDamageCause.entityAttack,damagingEntity:player})){hitCount++;}}catch{}finally{clearFastHit(player,target);}
   }
-  player.onScreenDisplay.setActionBar(`§6⚔ Chém Lan: §f${hitCount} mục tiêu phụ`);
+  pushHudNotification(player,`§6⚔ Chém Lan: §f${hitCount} mục tiêu phụ`,35,3);
   try{player.dimension.spawnParticle("minecraft:critical_hit_emitter",primary.location);}catch{}
   try{player.playSound("mob.warden.sonic_boom",{volume:0.35,pitch:1.5});}catch{}
 }

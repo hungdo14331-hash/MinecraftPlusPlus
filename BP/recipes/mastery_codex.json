@@ -1,0 +1,16 @@
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_shaped": {
+    "description": { "identifier": "mcpp:mastery_codex_recipe" },
+    "tags": ["crafting_table"],
+    "unlock": { "context": "AlwaysUnlocked" },
+    "pattern": ["PAP", "LBL", "PAP"],
+    "key": {
+      "P": { "item": "minecraft:paper" },
+      "A": { "item": "minecraft:amethyst_shard" },
+      "L": { "item": "minecraft:lapis_lazuli" },
+      "B": { "item": "minecraft:book" }
+    },
+    "result": { "item": "mcpp:mastery_codex", "count": 1 }
+  }
+}

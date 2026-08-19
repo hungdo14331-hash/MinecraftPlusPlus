@@ -1,0 +1,51 @@
+{
+  "format_version": "1.21.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.mcpp.arcane_table_book",
+        "texture_width": 64,
+        "texture_height": 64,
+        "visible_bounds_width": 1.5,
+        "visible_bounds_height": 1.5,
+        "visible_bounds_offset": [0, 0.5, 0]
+      },
+      "bones": [
+        {
+          "name": "root",
+          "pivot": [0, 2.5, 0],
+          "cubes": [
+            {
+              "origin": [-6.25, 2, -4.25],
+              "size": [6.25, 0.5, 8.5],
+              "pivot": [0, 2.5, 0],
+              "rotation": [0, 0, -12],
+              "uv": [0, 0]
+            },
+            {
+              "origin": [0, 2, -4.25],
+              "size": [6.25, 0.5, 8.5],
+              "pivot": [0, 2.5, 0],
+              "rotation": [0, 0, 12],
+              "uv": [0, 18]
+            },
+            {
+              "origin": [-5.75, 2.5, -4],
+              "size": [5.75, 0.5, 8],
+              "pivot": [0, 2.5, 0],
+              "rotation": [0, 0, -12],
+              "uv": [30, 0]
+            },
+            {
+              "origin": [0, 2.5, -4],
+              "size": [5.75, 0.5, 8],
+              "pivot": [0, 2.5, 0],
+              "rotation": [0, 0, 12],
+              "uv": [30, 18]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

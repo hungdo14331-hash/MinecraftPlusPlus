@@ -8,6 +8,7 @@ import { toMcpp } from "../health/health_scaler";
 import { applySelfHealMcpp } from "../health/healing_service";
 import { TaskQueue } from "../../core/scheduler/task_queue";
 import { isSwordItem } from "../../core/utils/item_types";
+import { pushHudNotification } from "../targeting/hud_notification_service";
 
 const LIFE_STEAL_PER_VAMPIRE_LEVEL = 0.05;
 const PVP_LIFE_STEAL_MULTIPLIER = 0.6;
@@ -51,10 +52,6 @@ function handleHurtAfter(ev: any): void {
     if (healedMcpp <= 0) return;
 
     // Phan hoi truc tiep de nguoi choi biet Life Steal da kich hoat.
-    try {
-      attacker.onScreenDisplay.setActionBar(`§c❤ Life Steal +${healedMcpp.toFixed(1)} HP`);
-    } catch (e) {
-      log.debug("Life Steal action bar loi:", e);
-    }
+    pushHudNotification(attacker,`§c❤ Life Steal +${healedMcpp.toFixed(1)} HP`,30,2);
   });
 }

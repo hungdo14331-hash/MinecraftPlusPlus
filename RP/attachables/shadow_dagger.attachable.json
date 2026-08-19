@@ -1,0 +1,43 @@
+{
+  "format_version": "1.20.30",
+  "minecraft:attachable": {
+    "description": {
+      "identifier": "mcpp:shadow_dagger",
+      "item": {
+        "mcpp:shadow_dagger": "query.is_owner_identifier_any('minecraft:player')"
+      },
+      "materials": {
+        "default": "entity_alphatest",
+        "enchanted": "entity_alphatest_glint"
+      },
+      "textures": {
+        "default": "textures/items/shadow_dagger",
+        "enchanted": "textures/misc/enchanted_item_glint"
+      },
+      "geometry": {
+        "default": "geometry.mcpp.weapon.shadow_dagger"
+      },
+      "animations": {
+        "wield_fp": "animation.mcpp.weapon.wield.dagger.fp",
+        "wield_tp": "animation.mcpp.weapon.wield.dagger.tp",
+        "attack_fp": "animation.mcpp.weapon.attack.dagger.fp",
+        "attack_tp": "animation.mcpp.weapon.attack.dagger.tp",
+        "ctrl": "controller.animation.mcpp.weapon_attack"
+      },
+      "scripts": {
+        "animate": [
+          {
+            "wield_fp": "context.is_first_person == 1.0"
+          },
+          {
+            "wield_tp": "context.is_first_person == 0.0"
+          },
+          "ctrl"
+        ]
+      },
+      "render_controllers": [
+        "controller.render.item_default"
+      ]
+    }
+  }
+}

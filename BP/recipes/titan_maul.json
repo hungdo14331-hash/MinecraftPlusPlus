@@ -1,0 +1,16 @@
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_shaped": {
+    "description": {"identifier": "mcpp:titan_maul_recipe"},
+    "tags": ["crafting_table"],
+    "unlock": {"context": "AlwaysUnlocked"},
+    "pattern": ["ONO", "OHO", " S "],
+    "key": {
+      "O": {"item": "minecraft:obsidian"},
+      "N": {"item": "minecraft:netherite_ingot"},
+      "H": {"item": "minecraft:heavy_core"},
+      "S": {"item": "minecraft:stick"}
+    },
+    "result": {"item": "mcpp:titan_maul", "count": 1}
+  }
+}

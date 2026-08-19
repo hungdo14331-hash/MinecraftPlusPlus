@@ -418,6 +418,22 @@
           "weight": 1
         }
       ]
+    },
+    {
+      "rolls": 1,
+      "conditions": [
+        {
+          "condition": "random_chance",
+          "chance": 0.035
+        }
+      ],
+      "entries": [
+        {
+          "type": "item",
+          "name": "mcpp:ember_cleaver",
+          "weight": 1
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,43 @@
+{
+  "format_version": "1.20.30",
+  "minecraft:attachable": {
+    "description": {
+      "identifier": "mcpp:arcane_spear",
+      "item": {
+        "mcpp:arcane_spear": "query.is_owner_identifier_any('minecraft:player')"
+      },
+      "materials": {
+        "default": "entity_alphatest",
+        "enchanted": "entity_alphatest_glint"
+      },
+      "textures": {
+        "default": "textures/items/arcane_spear",
+        "enchanted": "textures/misc/enchanted_item_glint"
+      },
+      "geometry": {
+        "default": "geometry.mcpp.weapon.arcane_spear"
+      },
+      "animations": {
+        "wield_fp": "animation.mcpp.weapon.wield.polearm.fp",
+        "wield_tp": "animation.mcpp.weapon.wield.polearm.tp",
+        "attack_fp": "animation.mcpp.weapon.attack.polearm.fp",
+        "attack_tp": "animation.mcpp.weapon.attack.polearm.tp",
+        "ctrl": "controller.animation.mcpp.weapon_attack"
+      },
+      "scripts": {
+        "animate": [
+          {
+            "wield_fp": "context.is_first_person == 1.0"
+          },
+          {
+            "wield_tp": "context.is_first_person == 0.0"
+          },
+          "ctrl"
+        ]
+      },
+      "render_controllers": [
+        "controller.render.item_default"
+      ]
+    }
+  }
+}
